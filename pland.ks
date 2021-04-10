@@ -44,15 +44,17 @@ when not plandDone and bottomAlt < 100 and not gear then {
     toggle gear.
 }
 local wantSpeed to 0.0.
+local onceUnderTime to false.
 when not plandDone and burnTime() > timeToImpact() then { // breaking
     set wantSpeed to 1.0.
+    set onceUnderTime to true.
 
     print "Throttle ^    : " + round(wantSpeed * 100, 0) + "%     " at (2, 10).
     lock throttle to wantSpeed.
 
     return true.
 }
-when not plandDone and burnTime() < timeToImpact() then { // landing
+when not plandDone and onceUnderTime and burnTime() < timeToImpact() then { // landing
     set diff to timeToImpact() - burnTime().
     set wantSpeed to 1.0 / timeToImpact() * (burnTime() - diff * 0.95).
     if (ship:verticalspeed > 0.1 or burnTime() * 2 < timeToImpact()) set wantSpeed to 0.

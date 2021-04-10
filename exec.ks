@@ -27,7 +27,7 @@ function printNode {
     print "Node: " + round(e)+"s  r:"+round(n:radialout,2)+ "   n:"+ round(n:normal,2) + "   p:"+round(n:prograde, 2) at (2, 11).
 }
 
-when not hasNode then {
+when not execDone and not hasNode then {
     print "No manouver planned.                      " at (2, 10).
     print "                                                                        " at (2, 11).
     wait 1.
