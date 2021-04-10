@@ -14,6 +14,7 @@ global ag1DeployAt to 68000.
 global ag2DeployAt to 74000.
 global powerLandFuel to 250.
 global ignoredSolidFuel to 100.
+global waitTimeBetweenStages to 2.
 
 clearscreen.
 global targetAngle to 0.0.
@@ -94,7 +95,7 @@ when not orbitDone and
     set thrusterLimit to 100.0.
     wait 0.2.
     stage.
-    if(not startWithSolid) wait 2.
+    wait waitTimeBetweenStages.
     set startWithSolid to false. // only first separation has solid fuel
     
     return true.
