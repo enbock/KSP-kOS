@@ -13,6 +13,7 @@ global minTimeToApoapsis to 15.0.
 global ag1DeployAt to 68000.
 global ag2DeployAt to 74000.
 global powerLandFuel to 250.
+global ignoredSolidFuel to 100.
 
 clearscreen.
 global targetAngle to 0.0.
@@ -80,11 +81,11 @@ when body:name <> "Kerbin" and alt:radar > 100 and gear then {
 local burnPos to 15.
 print "--== Burning ==--" at (0, burnPos).
 print "Multipliers:" at (2, burnPos+3).
-local startWithSolid to stage:resourcesLex["SolidFuel"]:amount > 1.
+local startWithSolid to (stage:resourcesLex["SolidFuel"]:amount - ignoredSolidFuel) > 1.
 when not orbitDone and 
     not startInFlight and 
     stage:resourcesLex["LiquidFuel"]:amount <= (0.025+powerLandFuel) and 
-    stage:resourcesLex["SolidFuel"]:amount <= 0.025 
+    (stage:resourcesLex["SolidFuel"]:amount - ignoredSolidFuel) <= 0.025 
     then {
 
     print "Stage " + ship:stagenum + " at " + round(alt:radar, 2) at (2, burnPos + 1).
