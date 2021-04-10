@@ -1,7 +1,8 @@
 
 wait until ship:unpacked.
 
-switch to 0.
+copyPath("0:/pland", "").
+
 wait until ship:verticalspeed < -100.
 wait until ship:unpacked.
 core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
