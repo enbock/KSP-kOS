@@ -4,6 +4,7 @@
 
 global uturnStartAt to 10.
 global targetOrbit to 100000.
+if (body:name = "Mun") set targetOrbit to 30000.
 global targetTwr to 2.
 global maxVerticalSpeed to 400.0.
 global minVerticalSpeed to 50.
@@ -11,18 +12,16 @@ global maxQ to 0.2.
 global minTimeToApoapsis to 15.0.
 global ag1DeployAt to 68000.
 global ag2DeployAt to 74000.
-global powerLandFluel to 100.
+global powerLandFuel to 100.
 
 clearscreen.
 global targetAngle to 0.0.
 global startInFlight to ship:velocity:surface:mag > 100.
 global orbitDone to startInFlight and isApoapsisReached().
 
-if (body:name = "Mun") set targetOrbit to 30000.
-
 if (not startInFlight) {
     SAS on.
-    if(body:name = "Kerbin") lock throttle to 1.0.
+    if(ship:status = "PRELAUNCH") lock throttle to 1.0.
     print "Wait for flight start.".
 }
 function twr {
@@ -87,7 +86,7 @@ print "Multipliers:" at (2, burnPos+3).
 local startWithSolid to stage:resourcesLex["SolidFuel"]:amount > 1.
 when not orbitDone and 
     not startInFlight and 
-    stage:resourcesLex["LiquidFuel"]:amount <= (0.025+powerLandFluel) and 
+    stage:resourcesLex["LiquidFuel"]:amount <= (0.025+powerLandFuel) and 
     stage:resourcesLex["SolidFuel"]:amount <= 0.025 
     then {
 

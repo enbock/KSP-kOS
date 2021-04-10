@@ -5,7 +5,7 @@
 set orientAt to 3. // 3 burn time before touch down
 set bottomAlt to ship:bounds:bottomaltradar.
 local plandDone to false.
-local touchDownHeight to 1.0.
+local touchDownHeight to 0.5.
 clearScreen.
 wait 0.
 
@@ -20,7 +20,7 @@ function timeToImpact {
 set lt to 0.
 WHEN not plandDone THEN {
     SET lt to lt + 1.
-    if (lt > 3) {
+    if (lt > 2) {
         set bottomAlt to ship:bounds:bottomaltradar.
         set lt to 0.
         wait 0.
@@ -43,18 +43,24 @@ when not plandDone and bottomAlt < 10 then {
 when not plandDone and bottomAlt < 100 and not gear then {
     toggle gear.
 }
+local wantSpeed to 0.0.
+when not plandDone and burnTime() > timeToImpact() then { // breaking
+    set wantSpeed to 1.0.
 
-when not plandDone and burnTime() > timeToImpact() then {
-    local wantSpeed to abs(cos(90.0 * (1.0 / timeToImpact() * burnTime()))).
-    if (ship:verticalspeed > 0) set wantSpeed to 0.
-
-    print "Throttle      : " + round(wantSpeed * 100, 0) + "%     " at (2, 10).
+    print "Throttle ^    : " + round(wantSpeed * 100, 0) + "%     " at (2, 10).
     lock throttle to wantSpeed.
 
     return true.
 }
-when not plandDone and burnTime() < timeToImpact() then {
-    lock throttle to 0.
+when not plandDone and burnTime() < timeToImpact() then { // landing
+    set diff to timeToImpact() - burnTime().
+    set wantSpeed to 1.0 / timeToImpact() * (burnTime() - diff * 0.95).
+    if (ship:verticalspeed > 0.1 or burnTime() * 2 < timeToImpact()) set wantSpeed to 0.
+
+    print "Throttle v    : " + round(wantSpeed * 100, 0) + "%     " at (2, 10).
+    lock throttle to wantSpeed.
+
+    return true.
 }
 
 when not plandDone and true then {

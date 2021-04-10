@@ -79,10 +79,10 @@ when not burnDone and inManouver then {
     
     if (deltaV < 0.1 or oldDeltaV < deltaV or isFuelEmpy()) {
         set burnDone to true.
-    } else if (deltaV < 3.0) {
+    } else if (deltaV < 2.0) {
         lock throttle to minThustPercent.
-    } else if (deltaV < 13.0) {
-        lock throttle to max(minThustPercent, 1.0 / 10.0 * (deltaV - 3.0)).
+    } else if (deltaV < 7.0) {
+        lock throttle to max(minThustPercent, 1.0 / 4.0 * (deltaV - 2.0)).
     } else lock throttle to 1.0.
 
     set oldDeltaV to deltaV.
