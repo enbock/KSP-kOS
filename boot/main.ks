@@ -13,7 +13,7 @@ set terminal:width to 48.
 set terminal:height to 24.
 
 if(ship:status = "PRELAUNCH" or ship:status = "LANDED") run start.
-else if(ship:status = "ORBITING" and ship:status = "ESCAPING") run exec.
+else if(ship:status = "ORBITING" or ship:status = "ESCAPING") run exec.
 else if(ship:status = "SUB_ORBITAL" and ship:verticalspeed < 0) {
     if(ship:deltaV:current > 0) run pland. 
     else run land.

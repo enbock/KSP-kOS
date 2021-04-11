@@ -82,12 +82,12 @@ when body:name <> "Kerbin" and alt:radar > 100 and gear then {
 local burnPos to 15.
 print "--== Burning ==--" at (0, burnPos).
 print "Multipliers:" at (2, burnPos+3).
-local startWithSolid to (stage:resourcesLex["SolidFuel"]:amount - ignoredSolidFuel) > 1.
 when not orbitDone and 
     not startInFlight and 
     stage:resourcesLex["LiquidFuel"]:amount <= (0.025+powerLandFuel) and 
-    (stage:resourcesLex["SolidFuel"]:amount - ignoredSolidFuel) <= 0.025 
-    then {
+    (stage:resourcesLex["SolidFuel"]:amount - ignoredSolidFuel) <= 0.025 and 
+    ship:stagenum > 0
+then {
 
     print "Stage " + ship:stagenum + " at " + round(alt:radar, 2) at (2, burnPos + 1).
     lock throttle to 0.
@@ -96,7 +96,6 @@ when not orbitDone and
     wait 0.2.
     stage.
     wait waitTimeBetweenStages.
-    set startWithSolid to false. // only first separation has solid fuel
     
     return true.
 }
