@@ -7,10 +7,23 @@ set bottomAlt to ship:bounds:bottomaltradar.
 local plandDone to false.
 local touchDownHeight to 0.5.
 clearScreen.
+print "Powered landing loaded.".
+print "Ready.".
 wait 0.
 
+    
 function burnTime {
-    return min(ship:velocity:surface:mag, ship:deltaV:current) / (max(0.0001, ship:availablethrust) / ship:mass).
+    if (bottomAlt < 50.0) {
+        return min(ship:velocity:surface:mag, ship:deltaV:current) / (max(0.0001, ship:availablethrust) / ship:mass).
+    }
+
+    declare local g to ship:body:mu/((body:radius)^2). // use gravi at surface -> more safety burn height
+	declare local vs to ship:verticalspeed.//ship:velocity:surface:mag.//
+	declare local va to (max(1, ship:availablethrust)/ship:mass) - g.
+    declare local burnHeight to ((vs^2)/(2*va)).
+
+    declare local bt to (burnHeight / va) + 0.5. // add half second safty area
+    return min(bt, ship:deltaV:current / va).
 }
 
 function timeToImpact {
@@ -45,7 +58,7 @@ when not plandDone and bottomAlt < 100 and not gear then {
 }
 local wantSpeed to 0.0.
 local onceUnderTime to false.
-when not plandDone and burnTime() > timeToImpact() then { // breaking
+when not plandDone and burnTime() >= timeToImpact() then { // breaking
     set wantSpeed to 1.0.
     set onceUnderTime to true.
 
@@ -66,8 +79,8 @@ when not plandDone and onceUnderTime and burnTime() < timeToImpact() then { // l
 }
 
 when not plandDone and true then {
-    print "Time to impact: " + round(timeToImpact(), 0) + "s     " at (2, 5).
-    print "Burn time     : " + round(burnTime(), 0) + "s     " at (2, 6).
+    print "Time to impact: " + round(timeToImpact(), 2) + "s     " at (2, 5).
+    print "Burn time     : " + round(burnTime(), 2) + "s     " at (2, 6).
     print "Speed         : " + round(ship:velocity:surface:mag, 0) + "m/s     " at (2, 7).
     print "Height        : " + round(bottomAlt, 2) + "m     " at (2, 8).
 

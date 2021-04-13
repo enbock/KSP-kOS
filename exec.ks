@@ -10,6 +10,8 @@ global inManouver to false.
 local execDone to false.
 
 clearScreen.
+print "Node execution loaded.".
+print "Ready.".
 
 function isFuelEmpy {
     return stage:resourcesLex["LiquidFuel"]:amount <= 0.025 and stage:resourcesLex["SolidFuel"]:amount <= 0.025.

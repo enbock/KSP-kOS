@@ -5,12 +5,12 @@
 global uturnStartAt to 10.
 global targetOrbit to 100000.
 if (body:name = "Mun") set targetOrbit to 30000.
-global targetTwr to 2.
-global maxVerticalSpeed to 400.0.
+global targetTwr to 2.2.
+global maxVerticalSpeed to 500.0.
 global minVerticalSpeed to 50.
 global maxQ to 0.2.
 global minTimeToApoapsis to 15.0.
-global ag1DeployAt to 68000.
+//global ag1DeployAt to 68000.
 global ag2DeployAt to 74000.
 global powerLandFuel to 250.
 global ignoredSolidFuel to 100.
@@ -62,10 +62,10 @@ if (not startInFlight) {
     wait 0.
 }
 
-when not orbitDone and ship:altitude > ag1DeployAt and not ag1 then {
-    toggle ag1.
-    return false.
-}
+//when not orbitDone and ship:altitude > ag1DeployAt and not ag1 then {
+//    toggle ag1.
+//    return false.
+//}
 
 when body:name = "Kerbin" and ship:altitude > ag2DeployAt and not ag2 then {
     set ag2 to true.
@@ -93,7 +93,7 @@ then {
     lock throttle to 0.
     set oldThrottle to 1.0.
     set thrusterLimit to 100.0.
-    wait 0.2.
+    wait 0.5.
     stage.
     wait waitTimeBetweenStages.
     
