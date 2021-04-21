@@ -2,6 +2,7 @@
 // Gandur's Start script.
 //
 
+global startDirection to 90.
 global uturnStartAt to 10.
 global targetOrbit to 100000.
 if (body:name = "Mun") set targetOrbit to 30000.
@@ -165,7 +166,7 @@ when not orbitDone and not startInFlight then {
     return true.
 }
 
-local mySteering to heading(90, 90, -90).
+local mySteering to heading(startDirection, 90, -90).
 if (not startInFlight) LOCK steering TO mySteering.
 local steeringPos to 10.
 print "--== STEERING ==--" at (0, steeringPos).
@@ -182,9 +183,9 @@ WHEN not orbitDone and not startInFlight THEN {
     }
     
     if(speed < uturnStartAt) {
-        set mySteering TO heading(90, 90, -90).
+        set mySteering TO heading(startDirection, 90, -90).
     } else {
-        set mySteering TO heading(90, angle, -90).
+        set mySteering TO heading(startDirection, angle, -90).
         print "Steering:" + round(angle, 2) at (2, steeringPos + 2).
     }
     wait 0.
