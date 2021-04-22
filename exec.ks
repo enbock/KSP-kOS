@@ -45,7 +45,6 @@ when hasNode and burnDone and not inManouver and (nextNode:eta > getBurnDuration
 
 when hasNode and burnDone and not inManouver and (nextNode:eta <= getBurnDuration() / 2.0 + beginManouverAt) then {
     local manouver to nextNode.
-    clearScreen.
     SAS off.
     lock steering to manouver.
     print "Wait for ignition.         " at (2, 10).
