@@ -30,18 +30,17 @@ function printNode {
 }
 
 when not execDone and not hasNode then {
-    print "No manouver planned.                      " at (2, 10).
-    print "                                                                        " at (2, 11).
+    print "No manouver planned.       " at (2, 10).
     wait 1.
-    return not execDone.
+    return true.
 }
 
 when hasNode and burnDone and not inManouver and (nextNode:eta > getBurnDuration() / 2.0 + beginManouverAt) then {
-    print "Wait for next manouver.                " at (2, 10).
+    print "Wait for next manouver.    " at (2, 10).
     printNode().
     wait 1.
 
-    return not execDone.
+    return true.
 }
 
 when hasNode and burnDone and not inManouver and (nextNode:eta <= getBurnDuration() / 2.0 + beginManouverAt) then {
@@ -49,14 +48,14 @@ when hasNode and burnDone and not inManouver and (nextNode:eta <= getBurnDuratio
     clearScreen.
     SAS off.
     lock steering to manouver.
-    print "Wait for ignition.               " at (2, 10).
+    print "Wait for ignition.         " at (2, 10).
     printNode().
 
-    return not execDone.
+    return true.
 }
 
 when hasNode and burnDone and not inManouver and (nextNode:eta <= getBurnDuration() / 2.0) then {
-    print "Main engine start.               " at (2, 10).
+    print "Main engine start.         " at (2, 10).
     printNode().
 
     lock steering to nextNode.
@@ -64,7 +63,7 @@ when hasNode and burnDone and not inManouver and (nextNode:eta <= getBurnDuratio
     set burnDone to false.
     set inManouver to true.
 
-    return not execDone.
+    return true.
 }
 
 when not burnDone and inManouver then {
@@ -91,7 +90,7 @@ when not burnDone and inManouver then {
     lock steering to manouver.
     wait 0.
 
-    return not execDone.
+    return true.
 }
 
 when burnDone and inManouver then {
@@ -103,24 +102,26 @@ when burnDone and inManouver then {
     SET SHIP:CONTROL:PILOTMAINTHROTTLE TO 0.
     SAS on.
     set inManouver to false.
+    print "                                                              " at (2, 11).
 
-    return not execDone.
+    return true.
 }
 
-when isFuelEmpy() then {
+when not execDone and isFuelEmpy() then {
     stage.
     wait 1.0.
     set execDone to isFuelEmpy().
-    return not execDone.
+    return true.
 }
 
-when ship:periapsis < 0 and ship:verticalspeed < 0 and not hasNode then {
+when not execDone and ship:periapsis < 0 and ship:verticalspeed < 0 and not hasNode then {
     set execDone to true.
+    return true.
 }
 
 wait until execDone.
 clearScreen.
 print "Node execution done.".
 wait 1.0.
-if (body:name = "Kerbin") run land.
+if (body:name = "Kerbin" or isFuelEmpy()) run land.
 else run pland.

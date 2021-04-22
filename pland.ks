@@ -2,6 +2,8 @@
 // Powered landing
 //
 
+global minAltituteForBurnstart to 200000.0.
+if(ship:body:name = "Kerbin") set minAltituteForBurnstart to 4000.0.
 set orientAt to 3. // 3 burn time before touch down
 set bottomAlt to ship:bounds:bottomaltradar.
 local plandDone to false.
@@ -58,7 +60,7 @@ when not plandDone and bottomAlt < 100 and not gear then {
 }
 local wantSpeed to 0.0.
 local onceUnderTime to false.
-when not plandDone and burnTime() >= timeToImpact() then { // breaking
+when not plandDone and minAltituteForBurnstart > ship:altitude and burnTime() >= timeToImpact() then { // breaking
     set wantSpeed to 1.0.
     set onceUnderTime to true.
 
@@ -71,6 +73,10 @@ when not plandDone and onceUnderTime and burnTime() < timeToImpact() then { // l
     set diff to timeToImpact() - burnTime().
     set wantSpeed to 1.0 / timeToImpact() * (burnTime() - diff * 0.95).
     if (ship:verticalspeed > 0.1 or burnTime() * 2 < timeToImpact()) set wantSpeed to 0.
+    if (wantSpeed < 0.2) {
+        set wantSpeed to 0.
+        set onceUnderTime to false.
+    }
 
     print "Throttle v    : " + round(wantSpeed * 100, 0) + "%     " at (2, 10).
     lock throttle to wantSpeed.
