@@ -8,7 +8,7 @@ copyPath("0:/start", "").
 
 core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
 wait 0.1.
-set terminal:charheight to 16.
+set terminal:charheight to 20.
 set terminal:width to 48.
 set terminal:height to 24.
 

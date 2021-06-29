@@ -13,23 +13,27 @@ print "Powered landing loaded.".
 print "Ready.".
 wait 0.
 
+function g {
+    return  body:mu / (body:radius + bottomAlt) ^ 2.
+}
     
 function burnTime {
-    if (bottomAlt < 50.0) {
-        return min(ship:velocity:surface:mag, ship:deltaV:current) / (max(0.0001, ship:availablethrust) / ship:mass).
-    }
+    //if (bottomAlt < 50.0) {
+        //return min(ship:velocity:surface:mag, ship:deltaV:current) / (max(0.0001, ship:availablethrust) / ship:mass).
+    //}
 
-    declare local g to ship:body:mu/((body:radius)^2). // use gravi at surface -> more safety burn height
-	declare local vs to ship:verticalspeed.//ship:velocity:surface:mag.//
-	declare local va to (max(1, ship:availablethrust)/ship:mass) - g.
-    declare local burnHeight to ((vs^2)/(2*va)).
+    declare local accel to ship:availablethrust/ship:mass.
+	declare local vs to ship:velocity:surface:mag.//(ship:verticalspeed * -1).//
+	//declare local va to accel - g().
+    //declare local burnHeight to ((vs^2)/(2*va)).
+    //declare local bt to (burnHeight / va).
+    //return min(bt, ship:deltaV:current / va).
 
-    declare local bt to (burnHeight / va) + 0.5. // add half second safty area
-    return min(bt, ship:deltaV:current / va).
+    return (g() * timeToImpact() + vs) / (accel * g()).
 }
 
 function timeToImpact {
-    return bottomAlt / ship:velocity:surface:mag.
+    return (bottomAlt / ship:velocity:surface:mag).
 }
 
 set lt to 0.
@@ -44,7 +48,7 @@ WHEN not plandDone THEN {
     return true.
 }
 
-when not plandDone and burnTime() * orientAt > timeToImpact and bottomAlt > 10 then {
+when not plandDone and burnTime() * orientAt > timeToImpact() and bottomAlt > 10 then {
     lock steering to ship:srfretrograde.
     set SAS to false.
 
@@ -55,7 +59,7 @@ when not plandDone and bottomAlt < 10 then {
     lock steering to up.
 }
 
-when not plandDone and bottomAlt < 100 and not gear then {
+when not plandDone and bottomAlt < (ship:verticalspeed * -1) * 5.0 and not gear then {
     toggle gear.
 }
 local wantSpeed to 0.0.
@@ -64,7 +68,7 @@ when not plandDone and minAltituteForBurnstart > ship:altitude and burnTime() >=
     set wantSpeed to 1.0.
     set onceUnderTime to true.
 
-    print "Throttle ^    : " + round(wantSpeed * 100, 0) + "%     " at (2, 10).
+    print "Throttle ^    : " + round(wantSpeed * 100, 0) + "%     " at (2, 12).
     lock throttle to wantSpeed.
 
     return true.
@@ -78,7 +82,7 @@ when not plandDone and onceUnderTime and burnTime() < timeToImpact() then { // l
         set onceUnderTime to false.
     }
 
-    print "Throttle v    : " + round(wantSpeed * 100, 0) + "%     " at (2, 10).
+    print "Throttle v    : " + round(wantSpeed * 100, 0) + "%     " at (2, 12).
     lock throttle to wantSpeed.
 
     return true.
@@ -87,8 +91,9 @@ when not plandDone and onceUnderTime and burnTime() < timeToImpact() then { // l
 when not plandDone and true then {
     print "Time to impact: " + round(timeToImpact(), 2) + "s     " at (2, 5).
     print "Burn time     : " + round(burnTime(), 2) + "s     " at (2, 6).
-    print "Speed         : " + round(ship:velocity:surface:mag, 0) + "m/s     " at (2, 7).
-    print "Height        : " + round(bottomAlt, 2) + "m     " at (2, 8).
+    
+    print "Speed         : " + round(ship:velocity:surface:mag, 0) + "m/s     " at (2, 8).
+    print "Height        : " + round(bottomAlt, 2) + "m     " at (2, 9).
 
     return true.
 }
