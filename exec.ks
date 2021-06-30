@@ -10,7 +10,7 @@ global inManouver to false.
 local execDone to false.
 
 clearScreen.
-print "Node execution loaded.".
+print "Node execution loaded. v1.0.1".
 print "Ready.".
 
 function isFuelEmpy {

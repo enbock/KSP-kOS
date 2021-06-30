@@ -2,10 +2,8 @@
 // Gandur's Start script.
 //
 
-global startDirection to 90.
 global uturnStartAt to 10.
 global targetOrbit to 100000.
-if (body:name = "Mun") set targetOrbit to 30000.
 global targetTwr to 2.2.
 global maxVerticalSpeed to 500.0.
 global minVerticalSpeed to 50.
@@ -17,7 +15,15 @@ global powerLandFuel to 250.
 global ignoredSolidFuel to 100.
 global waitTimeBetweenStages to 2.
 
+if (body:name = "Mun") {
+    set targetOrbit to 30000.
+    set maxVerticalSpeed to 200.0.
+    set minVerticalSpeed to 20.
+}
+
+
 clearscreen.
+print "Start v1.0.3".
 global targetAngle to 0.0.
 global startInFlight to ship:velocity:surface:mag > 100.
 global orbitDone to startInFlight and isApoapsisReached().
@@ -93,7 +99,8 @@ then {
     print "Stage " + ship:stagenum + " at " + round(alt:radar, 2) at (2, burnPos + 1).
     lock throttle to 0.
     set oldThrottle to 1.0.
-    set thrusterLimit to 100.0.
+    list engines in MyList.
+    FOR e IN MyList {  set e:THRUSTLIMIT to 100. }
     wait 0.5.
     stage.
     wait waitTimeBetweenStages.
