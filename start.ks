@@ -15,15 +15,20 @@ global powerLandFuel to 250.
 global ignoredSolidFuel to 100.
 global waitTimeBetweenStages to 2.
 
-if (body:name = "Mun") {
+if (ship:body:name = "Mun") {
     set targetOrbit to 30000.
-    set maxVerticalSpeed to 200.0.
+    set maxVerticalSpeed to 100.0.
     set minVerticalSpeed to 20.
+}
+if (ship:body:name = "Minmus") {
+    set targetOrbit to 30000.
+    set maxVerticalSpeed to 25.0.
+    set minVerticalSpeed to 10.
 }
 
 
 clearscreen.
-print "Start v1.0.3".
+print "Start v1.0.5".
 global targetAngle to 0.0.
 global startInFlight to ship:velocity:surface:mag > 100.
 global orbitDone to startInFlight and isApoapsisReached().
