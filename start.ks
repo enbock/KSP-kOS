@@ -2,6 +2,8 @@
 // Gandur's Start script.
 //
 
+if defined mainWasStarted {
+
 global uturnStartAt to 10.
 global targetOrbit to 100000.
 global targetTwr to 2.2.
@@ -225,3 +227,8 @@ if (not orbitDone) {
 
 set orbitDone to true.
 run exec.
+
+} else {
+    copyPath("0:/boot/main", "1:/boot/main").
+    run "boot/main".
+}

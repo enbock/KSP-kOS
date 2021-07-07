@@ -2,6 +2,8 @@
 // Powered landing
 //
 
+if defined mainWasStarted {
+
 set bottomAlt to ship:bounds:bottomaltradar.
 set power to 95.0. // only 95% max power (5% for "falling down")
 local plandDone to false.
@@ -23,7 +25,7 @@ function burnTime {
 	declare local vs to ship:velocity:surface:mag.
 
     if(ship:body:atm:exists) {
-        set accel to (ship:AVAILABLETHRUSTAT(ship:body:atm:ALTITUDEPRESSURE(ship:altitude-bottomAlt)) / ship:mass) - g().
+        set accel to (ship:availablethrust / ship:mass) - g().
         print "Thrust(ATM)   : " + round(accel, 2) + "m/s     " at (2, 10).
     } else {
         set accel to (ship:availablethrust / ship:mass) * g().
@@ -117,3 +119,8 @@ clearScreen.
 wait 0.1.
 print "Landed".
 wait 5.0.
+
+} else {
+    copyPath("0:/boot/main", "1:/boot/main").
+    run "boot/main".
+}

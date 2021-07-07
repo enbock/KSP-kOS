@@ -7,15 +7,12 @@ copyPath("0:/start", "").
 
 core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
 wait 0.1.
-set terminal:charheight to 20.
-set terminal:width to 48.
-set terminal:height to 24.
-print "Main-Lib 1.0.1".
+print "Main-Lib 1.0.2".
 
 global function startRoutine {
     if(ship:status = "PRELAUNCH" or ship:status = "LANDED") run start.
     else if(ship:status = "ORBITING" or ship:status = "ESCAPING") run exec.
-    else if(ship:status = "SUB_ORBITAL" and ship:verticalspeed < 0) {
+    else if((ship:status = "SUB_ORBITAL" or ship:status = "FLYING") and ship:verticalspeed < 0) {
         if(hasNode) {
             run exec.
         } else {

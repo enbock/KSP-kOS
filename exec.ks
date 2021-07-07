@@ -2,6 +2,8 @@
 // Node auto execution
 //
 
+if defined mainWasStarted {
+
 global minThustPercent is 0.1.
 global burnDone is true.
 global oldDeltaV to 0.
@@ -124,3 +126,8 @@ print "Node execution done.".
 wait 1.0.
 if (body:name = "Kerbin" or isFuelEmpy()) run land.
 else run pland.
+
+} else {
+    copyPath("0:/boot/main", "1:/boot/main").
+    run "boot/main".
+}

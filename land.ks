@@ -2,6 +2,8 @@
 // Parachute landing
 //
 
+if defined mainWasStarted {
+
 set parachuteMaxHeight to 800.0.
 
 SAS off.
@@ -43,3 +45,8 @@ wait until landDone.
 if (not gear) toggle gear.
 print "landDone.".
 core:part:getmodule("kOSProcessor"):doevent("Close Terminal").
+
+} else {
+    copyPath("0:/boot/main", "1:/boot/main").
+    run "boot/main".
+}
