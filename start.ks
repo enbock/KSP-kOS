@@ -7,10 +7,10 @@ if defined mainWasStarted {
 global uturnStartAt to 10.
 global targetOrbit to 100000.
 global targetTwr to 2.2.
-global maxVerticalSpeed to 500.0.
+global maxVerticalSpeed to 500.
 global minVerticalSpeed to 50.
 global maxQ to 0.2.
-global minTimeToApoapsis to 15.0.
+global minTimeToApoapsis to 15.
 //global ag1DeployAt to 68000.
 global ag2DeployAt to 74000.
 global powerLandFuel to 250.
@@ -19,18 +19,18 @@ global waitTimeBetweenStages to 2.
 
 if (ship:body:name = "Mun") {
     set targetOrbit to 30000.
-    set maxVerticalSpeed to 100.0.
+    set maxVerticalSpeed to 100.
     set minVerticalSpeed to 20.
 }
 if (ship:body:name = "Minmus") {
-    set targetOrbit to 30000.
-    set maxVerticalSpeed to 25.0.
-    set minVerticalSpeed to 10.
+    set targetOrbit to 20000.
+    set maxVerticalSpeed to 50.
+    set minVerticalSpeed to 20.
 }
 
 
 clearscreen.
-print "Start v1.0.5".
+print "Start v1.0.6".
 global targetAngle to 0.0.
 global startInFlight to ship:velocity:surface:mag > 100.
 global orbitDone to startInFlight and isApoapsisReached().
@@ -39,10 +39,6 @@ if (not startInFlight) {
     SAS on.
     if(ship:status = "PRELAUNCH") lock throttle to 1.0.
     print "Wait for flight start.".
-}
-function twr {
-    SET g TO body:mu / body:radius^2.
-    return ship:availableThrust * throttle / ship:mass * g / 100.0.
 }
 
 global apoapsisReached to false.

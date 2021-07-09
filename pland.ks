@@ -13,26 +13,15 @@ print "Ready.".
 wait 0.
 local wantSpeed to 0.0.
 local onceUnderTime to false.
-
-function g {
-    return  ship:body:mu / (ship:body:radius + bottomAlt) ^ 2.
-}
     
 function burnTime {
     if(ship:availablethrust <= 0) return 0.
 
-    declare local accel to 0.
 	declare local vs to ship:velocity:surface:mag.
 
-    if(ship:body:atm:exists) {
-        set accel to (ship:availablethrust / ship:mass) - g().
-        print "Thrust(ATM)   : " + round(accel, 2) + "m/s     " at (2, 10).
-    } else {
-        set accel to (ship:availablethrust / ship:mass) * g().
-        print "Thrust        : " + round(accel, 2) + "m/s     " at (2, 10).
-    }
+    print "Thrust        : " + round(accel(), 2) + "m/s     " at (2, 10).
 
-    declare local result to ((g() * timeToImpact()) + vs) / accel.
+    declare local result to ((g() * timeToImpact()) + vs) / accel().
 
     return result.
 }
