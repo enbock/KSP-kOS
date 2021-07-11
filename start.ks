@@ -3,11 +3,14 @@
 //
 
 if defined mainWasStarted {
+    
+set terminal:width to 48.
+set terminal:height to 25.
 
 global uturnStartAt to 10.
-global targetOrbit to 100000.
-global targetTwr to 2.2.
-global maxVerticalSpeed to 500.
+global targetOrbit to 80000.
+global targetTwr to 2.0.
+global maxVerticalSpeed to 400.
 global minVerticalSpeed to 50.
 global maxQ to 0.2.
 global minTimeToApoapsis to 15.
@@ -18,19 +21,19 @@ global ignoredSolidFuel to 100.
 global waitTimeBetweenStages to 2.
 
 if (ship:body:name = "Mun") {
-    set targetOrbit to 30000.
-    set maxVerticalSpeed to 100.
+    set targetOrbit to 20000.
+    set maxVerticalSpeed to 75.
     set minVerticalSpeed to 20.
 }
 if (ship:body:name = "Minmus") {
-    set targetOrbit to 20000.
+    set targetOrbit to 10000.
     set maxVerticalSpeed to 50.
     set minVerticalSpeed to 20.
 }
 
 
 clearscreen.
-print "Start v1.0.6".
+print "Start v1.0.7".
 global targetAngle to 0.0.
 global startInFlight to ship:velocity:surface:mag > 100.
 global orbitDone to startInFlight and isApoapsisReached().

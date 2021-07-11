@@ -11,7 +11,7 @@ lock steering to ship:srfretrograde.
 set landDone to false.
 
 clearScreen.
-print "Landing mode.".
+print "Landing v1.0.0".
 
 when body:name = "Kerbin" and ag2 and ship:altitude < 65000 then {
     set ag2 to false.

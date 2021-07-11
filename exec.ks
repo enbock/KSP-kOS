@@ -4,6 +4,9 @@
 
 if defined mainWasStarted {
 
+set terminal:width to 48.
+set terminal:height to 24.
+
 global minThustPercent is 0.1.
 global burnDone is true.
 global oldDeltaV to 0.
@@ -12,7 +15,7 @@ global inManouver to false.
 local execDone to false.
 
 clearScreen.
-print "Node execution loaded. v1.0.1".
+print "Node execution v1.0.1".
 print "Ready.".
 
 function isFuelEmpy {
@@ -124,7 +127,7 @@ wait until execDone.
 clearScreen.
 print "Node execution done.".
 wait 1.0.
-if (body:name = "Kerbin" or isFuelEmpy()) run land.
+if (isFuelEmpy()) run land.
 else run pland.
 
 } else {

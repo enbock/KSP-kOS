@@ -7,7 +7,7 @@ copyPath("0:/start", "").
 
 core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
 wait 0.1.
-print "Main-Lib 1.0.3".
+print "Main-Lib 1.0.4".
 
 global function startRoutine {
     if(ship:status = "PRELAUNCH" or ship:status = "LANDED") run start.
@@ -29,9 +29,9 @@ function g {
 }
 
 global function accel {
-    return (ship:availableThrust / ship:mass) / g().
+    return (ship:availableThrust / ship:mass).
 }
 
 global function twr {
-    return accel() * throttle.
+    return accel() / g() * throttle.
 }
