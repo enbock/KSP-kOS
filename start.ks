@@ -14,9 +14,8 @@ global maxVerticalSpeed to 400.
 global minVerticalSpeed to 50.
 global maxQ to 0.2.
 global minTimeToApoapsis to 15.
-//global ag1DeployAt to 68000.
 global ag2DeployAt to 74000.
-global powerLandFuel to 250.
+global powerLandFuel to 500.
 global ignoredSolidFuel to 100.
 global waitTimeBetweenStages to 2.
 
@@ -33,7 +32,7 @@ if (ship:body:name = "Minmus") {
 
 
 clearscreen.
-print "Start v1.0.7".
+print "Start v1.0.8".
 global targetAngle to 0.0.
 global startInFlight to ship:velocity:surface:mag > 100.
 global orbitDone to startInFlight and isApoapsisReached().

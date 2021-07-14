@@ -10,7 +10,7 @@ set terminal:height to 14.
 set bottomAlt to ship:bounds:bottomaltradar.
 local plandDone to false.
 clearScreen.
-print "Powered landing v2.1.0".
+print "Powered landing v2.1.1".
 print "Ready.".
 wait 0.
 wait until ship:verticalspeed < startPowerlandWithVSpeed.
@@ -18,8 +18,8 @@ local wantSpeed to 0.0.
 local onceUnderTime to false.
 
 function deltaVHeight {
-    //declare dvh to ship:deltaV:current / (accel() - g()) * (ship:verticalspeed * -1.0).
-    declare dvh to (ship:verticalspeed * -1.0) / (accel() / g()).
+    declare dvh to ship:deltaV:current / (accel() - g()) * (ship:verticalspeed * -1.0).
+    //declare dvh to (ship:verticalspeed * -1.0) / (accel() / g()).
     print "(!) Burn Alt  : " + round(dvh, 0) + "m     " at (2, 4).
 
     return dvh.
@@ -75,6 +75,8 @@ function calculatePower {
     //if (ship:body:atm:exists) {
     //    return 1.0 / timeToImpact() * burnTime().
     //}
+
+    if (burnHeight() <= 0.0001) return 0.
     return 1.0 / bottomAlt * burnHeight().
 }
 
@@ -157,6 +159,7 @@ unlock steering.
 unlock throttle.
 SET SHIP:CONTROL:PILOTMAINTHROTTLE TO 0.
 SAS on.
+set brakes to false.
 
 clearScreen.
 wait 0.1.
