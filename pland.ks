@@ -10,81 +10,74 @@ set terminal:height to 14.
 set bottomAlt to ship:bounds:bottomaltradar.
 local plandDone to false.
 clearScreen.
-print "Powered landing v2.1.1".
+print "Powered landing v2.3.1".
 print "Ready.".
 wait 0.
 wait until ship:verticalspeed < startPowerlandWithVSpeed.
 local wantSpeed to 0.0.
 local onceUnderTime to false.
 
-function deltaVHeight {
-    declare dvh to ship:deltaV:current / (accel() - g()) * (ship:verticalspeed * -1.0).
-    //declare dvh to (ship:verticalspeed * -1.0) / (accel() / g()).
-    print "(!) Burn Alt  : " + round(dvh, 0) + "m     " at (2, 4).
+local stopAirBreaksAt to 0.0.
+local restartAirBreaksAt to 0.0.
 
-    return dvh.
-}
-    
-function burnHeight {
-    if(ship:availablethrust <= 0 or ship:verticalspeed > 0) return 0.
-
-	declare local surS to ship:velocity:surface:mag.
-    declare local vs to ship:verticalspeed * -1.0.
-    declare local a to accel() - g().
-
-    if(surS > ship:deltaV:current or a < 0.0) {
-        return deltaVHeight.
-    }
-
-    declare local hsToHeight to 0.
-    if(surS - vs < vs * 0.75) set hsToHeight to ((surS - vs) / accel()) * vs.
-    declare local bh to ((vs^2) / (2*a)) + hsToHeight.
-
-    print "Burn Alt      : " + round(bh, 0)              + "m     " at (2, 4).
-    print "H-Speed > Hgt : " + round(hsToHeight, 0) + "m     " at (2, 9).
-
-    return bh.
+if(ship:body:name = "Kerbin") {
+    set stopAirBreaksAt to 45000.0.
+    set restartAirBreaksAt to 15000.0.
 }
 
-function burnTime {
-    if(ship:availablethrust <= 0) return 0.
-
-	declare local vs to ship:velocity:surface:mag.
-
-    declare local result to ((g() * timeToImpact()) + vs) / accel().
-
-    print "Burntime      : " + round(result, 0)              + "s     " at (2, 4).
-    print "Thrust        : " + round(accel(), 2) + "m/s       " at (2, 9).
-
-    return result.
-}
+set burnHeight to 0.0.
 
 function timeToImpact {
     return bottomAlt / ship:verticalspeed * -1.0.
 }
 
 function isStartBurn {
-    //if (ship:body:atm:exists) {
-    //    return timeToImpact() <= burnTime().
-    //}
-
-    return bottomAlt < burnHeight().
+    declare local vs to ship:verticalspeed * -1.0.
+    return bottomAlt < burnHeight + vs.
 }
 
 function calculatePower {
-    //if (ship:body:atm:exists) {
-    //    return 1.0 / timeToImpact() * burnTime().
-    //}
-
-    if (burnHeight() <= 0.0001) return 0.
-    return 1.0 / bottomAlt * burnHeight().
+    if (burnHeight <= 0.0001) return 0.
+    return 1.0 / bottomAlt * burnHeight.
 }
 
 function isResetMode {
-    //if (ship:body:atm:exists) {
-    //    return timeToImpact() * 0.8 > burnTime().
-    //}
-    return bottomAlt * 0.8 > burnHeight().
+    return bottomAlt * 0.75 > burnHeight.
+}
+
+// itteration based burn height calculation
+when not plandDone then {
+    if(ship:availablethrust <= 0 or ship:verticalspeed > 0) {
+        set burnHeight to 0.
+        return true.
+    }
+
+	declare local surS to ship:velocity:surface:mag.
+    declare local vs to ship:verticalspeed * -1.0.
+    declare local a to accel() - g().
+
+    if(surS > ship:deltaV:current or a < 0.0) {
+        if(ship:body:atm:exists) {
+            print "(!) only " + round(ship:deltaV:current, 0) + "m/s left. Left hope for atmosphere!" at (2, 4).
+            set burnHeight to 0.
+        } else {
+            declare dvh to ship:deltaV:current / (accel() - g()) * (ship:verticalspeed * -1.0). 
+            set burnHeight to dvh.
+            print "(!) Burn Alt  : " + round(dvh, 0) + "m     " at (2, 4).
+        }
+
+        return true.
+    }
+
+    declare local hsToHeight to 0.
+    if(surS - vs < vs * 0.75) set hsToHeight to ((surS - vs) / a) * vs.
+    declare local bh to ((vs^2) / (2*a)) + hsToHeight.
+
+    print "Burn Alt      : " + round(bh, 0)              + "m     " at (2, 4).
+    print "H-Speed > Hgt : " + round(hsToHeight, 0) + "m     " at (2, 9).
+
+    set burnHeight to bh.
+    return true.
 }
 
 set lt to 0.
@@ -103,6 +96,16 @@ when not plandDone then {
     lock steering to ship:srfretrograde.
     set SAS to false.
     set brakes to ship:body:atm:exists.
+}
+
+when not plandDone and ship:body:atm:exists and ship:altitude <= stopAirBreaksAt and ship:altitude > restartAirBreaksAt  and ship:velocity:surface:mag > 1000 then {
+    set brakes to false.
+}
+when not plandDone and ship:body:atm:exists and ship:altitude <= restartAirBreaksAt then {
+    set brakes to true.
+}
+when not plandDone and ship:body:atm:exists and ship:altitude < ship:body:atm:height then {
+    set ag2 to false.
 }
 
 when not plandDone and bottomAlt < 10 then {

@@ -5,15 +5,16 @@
 if defined mainWasStarted {
     
 set terminal:width to 48.
-set terminal:height to 25.
+set terminal:height to 26.
 
 global uturnStartAt to 10.
 global targetOrbit to 80000.
 global targetTwr to 2.0.
 global maxVerticalSpeed to 400.
-global minVerticalSpeed to 50.
+global minVerticalSpeed to 5.
 global maxQ to 0.2.
 global minTimeToApoapsis to 15.
+global maxTimeToApoapsis to 25.
 global ag2DeployAt to 74000.
 global powerLandFuel to 500.
 global ignoredSolidFuel to 100.
@@ -22,17 +23,15 @@ global waitTimeBetweenStages to 2.
 if (ship:body:name = "Mun") {
     set targetOrbit to 20000.
     set maxVerticalSpeed to 75.
-    set minVerticalSpeed to 20.
 }
 if (ship:body:name = "Minmus") {
     set targetOrbit to 10000.
     set maxVerticalSpeed to 50.
-    set minVerticalSpeed to 20.
 }
 
 
 clearscreen.
-print "Start v1.0.8".
+print "Start v1.1.0".
 global targetAngle to 0.0.
 global startInFlight to ship:velocity:surface:mag > 100.
 global orbitDone to startInFlight and isApoapsisReached().
@@ -155,11 +154,16 @@ when not orbitDone and not startInFlight then {
         set newThrottle to newThrottle * twrPercent. 
 
         local atPercent to 0.0.
-        local minTime to minTimeToApoapsis.
-        if (eta:apoapsis < minTime) {
-            set atPercent to max(0.0, 1.0 - (1.0 / minTime * eta:apoapsis)).
+        if (eta:apoapsis < minTimeToApoapsis) {
+            set atPercent to max(0.0, 1.0 - (1.0 / minTimeToApoapsis * eta:apoapsis)).
         }
-        print "time to apoapsis   : " + round(atPercent * 100.0, 0) + "% "  at (4, burnPos + 8).
+        print "min-T to apoapsis  : " + round((1.0+atPercent) * 100.0, 0) + "% "  at (4, burnPos + 8).
+        set maxApoPower to 1.0.
+        if (eta:apoapsis > maxTimeToApoapsis) {
+            set maxApoPower to max(0.0, 1.0 / eta:apoapsis * maxTimeToApoapsis).
+        }
+        set newThrottle to newThrottle * maxApoPower.
+        print "max-T to apoapsis  : " + round(maxApoPower * 100.0, 0) + "% "  at (4, burnPos + 9).
         set newThrottle to newThrottle + atPercent. 
     }
 
