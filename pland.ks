@@ -10,7 +10,7 @@ set terminal:height to 14.
 set bottomAlt to ship:bounds:bottomaltradar.
 local plandDone to false.
 clearScreen.
-print "Powered landing v2.3.1".
+print "Powered landing v2.3.2".
 print "Ready.".
 wait 0.
 wait until ship:verticalspeed < startPowerlandWithVSpeed.
@@ -42,7 +42,7 @@ function calculatePower {
 }
 
 function isResetMode {
-    return bottomAlt * 0.75 > burnHeight.
+    return ship:altitude < 500 and bottomAlt * 0.75 > burnHeight.
 }
 
 // itteration based burn height calculation
@@ -58,7 +58,7 @@ when not plandDone then {
 
     if(surS > ship:deltaV:current or a < 0.0) {
         if(ship:body:atm:exists) {
-            print "(!) only " + round(ship:deltaV:current, 0) + "m/s left. Left hope for atmosphere!" at (2, 4).
+            print "(!) ATM break : " + round(ship:deltaV:current, 0) + "m/s dV" at (2, 4).
             set burnHeight to 0.
         } else {
             declare dvh to ship:deltaV:current / (accel() - g()) * (ship:verticalspeed * -1.0). 

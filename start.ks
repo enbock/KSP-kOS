@@ -7,14 +7,10 @@ if defined mainWasStarted {
 set terminal:width to 48.
 set terminal:height to 26.
 
-global uturnStartAt to 10.
 global targetOrbit to 80000.
-global targetTwr to 2.0.
-global maxVerticalSpeed to 400.
-global minVerticalSpeed to 5.
 global maxQ to 0.2.
-global minTimeToApoapsis to 15.
-global maxTimeToApoapsis to 25.
+global minTimeToApoapsis to 10.
+global maxTimeToApoapsis to 60.
 global ag2DeployAt to 74000.
 global powerLandFuel to 500.
 global ignoredSolidFuel to 100.
@@ -22,16 +18,14 @@ global waitTimeBetweenStages to 2.
 
 if (ship:body:name = "Mun") {
     set targetOrbit to 20000.
-    set maxVerticalSpeed to 75.
 }
 if (ship:body:name = "Minmus") {
     set targetOrbit to 10000.
-    set maxVerticalSpeed to 50.
 }
 
 
 clearscreen.
-print "Start v1.1.0".
+print "Start v1.2.0".
 global targetAngle to 0.0.
 global startInFlight to ship:velocity:surface:mag > 100.
 global orbitDone to startInFlight and isApoapsisReached().
@@ -73,20 +67,15 @@ if (not startInFlight) {
     wait 0.
 }
 
-//when not orbitDone and ship:altitude > ag1DeployAt and not ag1 then {
-//    toggle ag1.
-//    return false.
-//}
-
-when body:name = "Kerbin" and ship:altitude > ag2DeployAt and not ag2 then {
+when ship:body:atm:exists and ship:altitude > ag2DeployAt and not ag2 then {
     set ag2 to true.
     return true.
 }
-when body:name = "Kerbin" and ship:altitude < ag2DeployAt and ag2 then {
+when ship:body:atm:exists and ship:altitude < ag2DeployAt and ag2 then {
     set ag2 to false.
     return true.
 }
-when body:name <> "Kerbin" and alt:radar > 100 and gear then {
+when alt:radar > 100 and gear then {
     set gear to false.
 }
 
@@ -133,38 +122,23 @@ when not orbitDone and not startInFlight then {
     if(not isApoapsisReached()) {
         set newThrottle to 1.0. 
 
-        local vertPercent to min(1.0, max(0.0, 1.0 - ((1.0 / maxVerticalSpeed * ship:verticalspeed) - 1.0))).
-        print "vertical           : " + round(vertPercent * 100.0, 0) + "% "  at (4, burnPos + 4).
-        set newThrottle to newThrottle * vertPercent. 
-
-        local vertAccel to maxVerticalSpeed * cos(90.0 / targetOrbit * ship:apoapsis).
-        if (vertAccel < minVerticalSpeed) set vertAccel to minVerticalSpeed.
-        local apoPercent to min(1.0, max(0.0, 1.0 - ((1.0 / vertAccel * ship:verticalspeed) - 1.0))).
-        print "apoapsis           : " + round(apoPercent * 100.0, 0) + "% "  at (4, burnPos + 5).
-        print "(" + round(vertAccel, 0) + "m/s vertical)    " at (30, burnPos + 5). 
-        set newThrottle to newThrottle * apoPercent. 
+        local hgtAddPercent to 0.0.
+        if (eta:apoapsis < minTimeToApoapsis) {
+            set hgtAddPercent to max(0.0, 1.0 - (1.0 / minTimeToApoapsis * eta:apoapsis)).
+        }
+        print "min-T to apoapsis  : " + round((1.0+hgtAddPercent) * 100.0, 0) + "% "  at (4, burnPos + 4).
+        set maxApoPower to 1.0.
+        if (eta:apoapsis > maxTimeToApoapsis) {
+            set maxApoPower to 1.0 - (max(0.0, (1.0 / 10.0) / maxTimeToApoapsis * 10.0 * eta:apoapsis) - 1.0).
+        }
+        set newThrottle to newThrottle * maxApoPower.
+        print "max-T to apoapsis  : " + round(maxApoPower * 100.0, 0) + "% "  at (4, burnPos + 5).
+        set newThrottle to newThrottle + hgtAddPercent. 
 
         local pressPercent to min(1.0, max(0.0, 1.0 - ((1.0 / maxQ * ship:dynamicpressure) - 1.0))).
         print "pressure           : " + round(pressPercent * 100.0, 0) + "% " at (4, burnPos + 6).
         print "(" + round(ship:dynamicpressure, 4) + "atm)      " at (30, burnPos + 6). 
         set newThrottle to newThrottle * pressPercent.
-
-        local twrPercent to min(1.0, max(0.0, 1.0 - ((1.0 / targetTwr * twr()) - 1.0))).
-        print "trust to wait ratio: " + round(twrPercent * 100.0, 0) + "% "  at (4, burnPos + 7).
-        set newThrottle to newThrottle * twrPercent. 
-
-        local atPercent to 0.0.
-        if (eta:apoapsis < minTimeToApoapsis) {
-            set atPercent to max(0.0, 1.0 - (1.0 / minTimeToApoapsis * eta:apoapsis)).
-        }
-        print "min-T to apoapsis  : " + round((1.0+atPercent) * 100.0, 0) + "% "  at (4, burnPos + 8).
-        set maxApoPower to 1.0.
-        if (eta:apoapsis > maxTimeToApoapsis) {
-            set maxApoPower to max(0.0, 1.0 / eta:apoapsis * maxTimeToApoapsis).
-        }
-        set newThrottle to newThrottle * maxApoPower.
-        print "max-T to apoapsis  : " + round(maxApoPower * 100.0, 0) + "% "  at (4, burnPos + 9).
-        set newThrottle to newThrottle + atPercent. 
     }
 
     set newThrottle to (oldThrottle * 3.0 + newThrottle) / 4.0.
@@ -198,12 +172,9 @@ WHEN not orbitDone and not startInFlight THEN {
         return false.
     }
     
-    if(speed < uturnStartAt) {
-        set mySteering TO heading(startDirection, 90, -90).
-    } else {
-        set mySteering TO heading(startDirection, angle, -90).
-        print "Steering:" + round(angle, 2) at (2, steeringPos + 2).
-    }
+    set mySteering TO heading(startDirection, angle, -90).
+    print "Steering:" + round(angle, 2) at (2, steeringPos + 2).
+    
     wait 0.
     return true.
 }
