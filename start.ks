@@ -5,7 +5,7 @@
 if defined mainWasStarted {
     
 set terminal:width to 48.
-set terminal:height to 26.
+set terminal:height to 24.
 
 global targetOrbit to 80000.
 global maxQ to 0.2.
@@ -25,7 +25,7 @@ if (ship:body:name = "Minmus") {
 
 
 clearscreen.
-print "Start v1.2.0".
+print "Start v1.2.1".
 global targetAngle to 0.0.
 global startInFlight to ship:velocity:surface:mag > 100.
 global orbitDone to startInFlight and isApoapsisReached().
@@ -35,6 +35,8 @@ if (not startInFlight) {
     if(ship:status = "PRELAUNCH") lock throttle to 1.0.
     print "Wait for flight start.".
 }
+
+wait until ship:verticalspeed > 5.
 
 global apoapsisReached to false.
 function isApoapsisReached {
