@@ -10,7 +10,7 @@ set terminal:height to 14.
 set bottomAlt to ship:bounds:bottomaltradar.
 local plandDone to false.
 clearScreen.
-print "Powered landing v2.3.2".
+print "Powered landing v2.3.3".
 print "Ready.".
 wait 0.
 wait until ship:verticalspeed < startPowerlandWithVSpeed.
@@ -19,10 +19,12 @@ local onceUnderTime to false.
 
 local stopAirBreaksAt to 0.0.
 local restartAirBreaksAt to 0.0.
+local stopEnginesUnder to 0.6.
+local avoidEnginesStopUnderAlt to 1000.
 
 if(ship:body:name = "Kerbin") {
-    set stopAirBreaksAt to 45000.0.
-    set restartAirBreaksAt to 15000.0.
+    //set stopAirBreaksAt to 45000.0.
+    //set restartAirBreaksAt to 15000.0.
 }
 
 set burnHeight to 0.0.
@@ -41,10 +43,6 @@ function calculatePower {
     return 1.0 / bottomAlt * burnHeight.
 }
 
-function isResetMode {
-    return ship:altitude < 500 and bottomAlt * 0.75 > burnHeight.
-}
-
 // itteration based burn height calculation
 when not plandDone then {
     if(ship:availablethrust <= 0 or ship:verticalspeed > 0) {
@@ -52,9 +50,15 @@ when not plandDone then {
         return true.
     }
 
+    print "Tank          : " + round(stage:resourcesLex["LiquidFuel"]:amount, 0) + "     " at (2, 10).
+    
 	declare local surS to ship:velocity:surface:mag.
     declare local vs to ship:verticalspeed * -1.0.
     declare local a to accel() - g().
+
+    if (accel() / g() > 3.0) {
+        set a to a * ((1.0 / (accel() / g())) * 3.0).
+    }
 
     if(surS > ship:deltaV:current or a < 0.0) {
         if(ship:body:atm:exists) {
@@ -133,7 +137,7 @@ when not plandDone and onceUnderTime then { // landing
         set wantSpeed to calculatePower().
     }
 
-    if (isResetMode()) {
+    if (wantSpeed < stopEnginesUnder and avoidEnginesStopUnderAlt > ship:altitude) {
         set wantSpeed to 0.
         set onceUnderTime to false.
     }
@@ -166,7 +170,11 @@ set brakes to false.
 
 clearScreen.
 wait 0.1.
-print "Landed".
+if (ship:availablethrust <= 0.0) {
+    print "Thrusters lost.".
+} else {
+    print "Landed.".
+}
 wait 5.0.
 
 } else {

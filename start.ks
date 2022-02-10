@@ -12,7 +12,7 @@ global maxQ to 0.2.
 global minTimeToApoapsis to 10.
 global maxTimeToApoapsis to 60.
 global ag2DeployAt to 74000.
-global powerLandFuel to 500.
+global powerLandFuelPercentage to 0.1.
 global ignoredSolidFuel to 100.
 global waitTimeBetweenStages to 2.
 
@@ -43,11 +43,14 @@ function isApoapsisReached {
     set apoapsisReached to apoapsisReached or ship:apoapsis >= targetOrbit.
     return apoapsisReached.
 }
-
+local powerLandFuel to round(stage:resourcesLex["LiquidFuel"]:capacity * powerLandFuelPercentage, 0).
 local corePos to 5.
 WHEN not orbitDone and not isApoapsisReached() and not startInFlight THEN {
+
+    set powerLandFuel to round(stage:resourcesLex["LiquidFuel"]:capacity * powerLandFuelPercentage, 0).
+
     PRINT "TWR    : " + round(twr(), 2) + "    " at (0, corePos).
-    PRINT "L-Fuel : " + round(stage:resourcesLex["LiquidFuel"]:amount, 0) + "    " at (0, corePos + 1).
+    PRINT "L-Fuel : " + round(stage:resourcesLex["LiquidFuel"]:amount - powerLandFuelPercentage, 0) + "    " at (0, corePos + 1).
     PRINT "S-Fuel : " + round(stage:resourcesLex["SolidFuel"]:amount, 0) + "    " at (0, corePos + 2).
     
     PRINT "Speed  : " + round(ship:velocity:orbit:mag, 1) + "m/s     " at (20, corePos).
