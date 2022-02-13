@@ -21,11 +21,17 @@ if (ship:body:name = "Mun") {
 }
 if (ship:body:name = "Minmus") {
     set targetOrbit to 10000.
+    global maxTimeToApoapsis to 90.
 }
 
+global apoapsisReached to false.
+function isApoapsisReached {
+    set apoapsisReached to apoapsisReached or ship:apoapsis >= targetOrbit.
+    return apoapsisReached.
+}
 
 clearscreen.
-print "Start v1.2.1".
+print "Start v1.2.2".
 global targetAngle to 0.0.
 global startInFlight to ship:velocity:surface:mag > 100.
 global orbitDone to startInFlight and isApoapsisReached().
@@ -38,11 +44,6 @@ if (not startInFlight) {
 
 wait until ship:verticalspeed > 5.
 
-global apoapsisReached to false.
-function isApoapsisReached {
-    set apoapsisReached to apoapsisReached or ship:apoapsis >= targetOrbit.
-    return apoapsisReached.
-}
 local powerLandFuel to round(stage:resourcesLex["LiquidFuel"]:capacity * powerLandFuelPercentage, 0).
 local corePos to 5.
 WHEN not orbitDone and not isApoapsisReached() and not startInFlight THEN {
@@ -50,7 +51,7 @@ WHEN not orbitDone and not isApoapsisReached() and not startInFlight THEN {
     set powerLandFuel to round(stage:resourcesLex["LiquidFuel"]:capacity * powerLandFuelPercentage, 0).
 
     PRINT "TWR    : " + round(twr(), 2) + "    " at (0, corePos).
-    PRINT "L-Fuel : " + round(stage:resourcesLex["LiquidFuel"]:amount - powerLandFuelPercentage, 0) + "    " at (0, corePos + 1).
+    PRINT "L-Fuel : " + round(stage:resourcesLex["LiquidFuel"]:amount - powerLandFuel, 0) + "    " at (0, corePos + 1).
     PRINT "S-Fuel : " + round(stage:resourcesLex["SolidFuel"]:amount, 0) + "    " at (0, corePos + 2).
     
     PRINT "Speed  : " + round(ship:velocity:orbit:mag, 1) + "m/s     " at (20, corePos).

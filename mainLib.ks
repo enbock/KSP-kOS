@@ -7,7 +7,7 @@ copyPath("0:/start", "").
 
 core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
 wait 0.1.
-print "Main-Lib 1.0.5".
+print "Main-Lib 1.1.0".
 
 global function startRoutine {
     if(ship:status = "PRELAUNCH" or ship:status = "LANDED") run start.
@@ -17,6 +17,7 @@ global function startRoutine {
         else run land.
     }
     else if(ship:status = "SUB_ORBITAL") run start.
+    else if(ship:status = "FLYING") if (ship:verticalspeed < 0) run pland. else run start.
     else print "For status " + ship:status + " Jeb does not knew a script.".
 }
 
