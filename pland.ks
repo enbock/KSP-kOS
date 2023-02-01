@@ -90,7 +90,7 @@ local isStartBurn to isStartBurnCalc().
 when lt = 0 then {
     set currentDeltaV to startDeltaV * (1 / startTank * stage:resourcesLex["LiquidFuel"]:amount).
     if (currentDeltaV = 0) {
-        set currentDeltaV to 1000.
+        set currentDeltaV to 500.
     }
     set isStartBurn to isStartBurnCalc().
     set timeToImpact to timeToImpactCalc().
@@ -167,7 +167,7 @@ when lt = 0 and not onceUnderTime and isStartBurn then { // breaking
     if(not plandDone) return true.
 }
 when onceUnderTime and lt = 0  then { // landing
-    if (ship:verticalspeed >= -0.1 or timeToImpact < 0.05) {
+    if ((ship:verticalspeed >= -0.1 or timeToImpact < 0.05) and bottomAlt < 10) {
         set wantSpeed to 0.
         set plandDone to true.
     } else {

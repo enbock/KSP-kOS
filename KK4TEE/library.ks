@@ -141,8 +141,7 @@ declare function GYROINIT{
     lock impactTime to betterALTRADAR / -VERTICALSPEED.
     lock killTime to (totalSpeed/GRAVITY) / (TWRTarget).
 
-    // reduce time for using airbreaks
-    lock fallTime to ((-VERTICALSPEED - sqrt( VERTICALSPEED^2-(2 * (-GRAVITY) * (betterALTRADAR - 0))) ) /  ((-GRAVITY))) * 0.60.
+    lock fallTime to ((-VERTICALSPEED - sqrt( VERTICALSPEED^2-(2 * (-GRAVITY) * (betterALTRADAR - 0))) ) /  ((-GRAVITY))).
     
     //set t0 to TIME:SECONDS. //Previous loop time
     set ENGINESAFETY to 1. //Engage engine safety

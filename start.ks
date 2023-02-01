@@ -15,6 +15,7 @@ global ag2DeployAt to 74000.
 global powerLandFuelPercentage to 0.3.
 global ignoredSolidFuel to 100.
 global waitTimeBetweenStages to 2.
+global minThrust to 0.25.
 
 if (ship:body:name = "Mun") {
     set targetOrbit to 20000.
@@ -146,6 +147,8 @@ when not orbitDone and not startInFlight then {
         print "(" + round(ship:dynamicpressure, 4) + "atm)      " at (30, burnPos + 6). 
         set newThrottle to newThrottle * pressPercent.
     }
+
+    if(newThrottle < minThrust) set newThrottle to minThrust.
 
     set newThrottle to (oldThrottle * 3.0 + newThrottle) / 4.0.
     set oldThrottle to newThrottle.
