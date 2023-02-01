@@ -21,7 +21,7 @@ if(ship:body:name = "Kerbin") {
 }
 
 clearScreen.
-print "Powered landing v3.1.2".
+print "Powered landing v3.2.0".
 print "Ready.".
 wait 0.
 
@@ -45,6 +45,7 @@ local currentDeltaV to SHIP:STAGEDELTAV(SHIP:STAGENUM):CURRENT.
 local lastMass to ship:mass.
 local startDeltaV to 0.
 local startTank to 0.
+
 when ((currentDeltaV > SHIP:STAGEDELTAV(SHIP:STAGENUM):CURRENT and round(SHIP:STAGEDELTAV(SHIP:STAGENUM):CURRENT,0) > 0) or round(currentDeltaV,0) = 0) and lt = 0 then {
     set currentDeltaV to SHIP:STAGEDELTAV(SHIP:STAGENUM):CURRENT.
     set startDeltaV to currentDeltaV.
@@ -57,11 +58,12 @@ when lt = 0 then {
     print "S-Speed       : " + round(ship:velocity:surface:mag, 0) + "m/s     " at (2, 6).
     print "V-Speed       : " + round(ship:verticalspeed * -1.0, 0) + "m/s     " at (2, 7).
     print "Tank          : " + round(stage:resourcesLex["LiquidFuel"]:amount, 0) +" ("+ round(currentDeltaV, 0) + "m/s dV)     " at (2, 10).
+
     if(not plandDone) return true.
 }
 
 
-wait until ship:verticalspeed < startPowerlandWithVSpeed and ship:status = "SUB_ORBITAL".
+wait until ship:verticalspeed < startPowerlandWithVSpeed and (ship:status = "SUB_ORBITAL" or ignoreFlightState = true).
 local bottomAlt to ship:bounds:bottomaltradar.
 set currentDeltaV to currentDeltaV / (1/lastMass * ship:mass).
 set startDeltaV to currentDeltaV.
@@ -87,6 +89,9 @@ local isStartBurn to isStartBurnCalc().
 
 when lt = 0 then {
     set currentDeltaV to startDeltaV * (1 / startTank * stage:resourcesLex["LiquidFuel"]:amount).
+    if (currentDeltaV = 0) {
+        set currentDeltaV to 1000.
+    }
     set isStartBurn to isStartBurnCalc().
     set timeToImpact to timeToImpactCalc().
     

@@ -12,7 +12,7 @@ global maxQ to 0.2.
 global minTimeToApoapsis to 10.
 global maxTimeToApoapsis to 60.
 global ag2DeployAt to 74000.
-global powerLandFuelPercentage to 0.1.
+global powerLandFuelPercentage to 0.3.
 global ignoredSolidFuel to 100.
 global waitTimeBetweenStages to 2.
 

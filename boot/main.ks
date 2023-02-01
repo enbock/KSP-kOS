@@ -12,5 +12,6 @@ wait 1.
 global startDirection to 90.
 global startPowerlandWithVSpeed to -5.
 global mainWasStarted to true.
+global ignoreFlightState to false.
 
 startRoutine().
