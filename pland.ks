@@ -21,7 +21,7 @@ if(ship:body:name = "Kerbin") {
 }
 
 clearScreen.
-print "Powered landing v3.2.0".
+print "Powered landing v4.0.0".
 print "Ready.".
 wait 0.
 
@@ -82,8 +82,8 @@ function timeToImpactCalc {
 local timeToImpact to timeToImpactCalc().
 
 function isStartBurnCalc {
-    declare local vs to ship:verticalspeed * -1.0.
-    return bottomAlt < burnHeight + vs.
+    //declare local vs to ship:verticalspeed * -1.0.
+    return bottomAlt < burnHeight. // + vs.
 }
 local isStartBurn to isStartBurnCalc().
 
@@ -105,31 +105,19 @@ when lt = 0 then {
     
 	declare local surSpeed to ship:velocity:surface:mag.
     declare local vs to ship:verticalspeed * -1.0.
-    declare local a to accel() - g().
-    declare local speed to sqrt(vs^2 + surSpeed^2) / 3 + (vs / 3) * 2.
+    declare local speed to sqrt(vs^2 + surSpeed^2). // / 3 + (vs / 3) * 2.
+    declare local burnTime to fuelBurnTime().
 
-    if (accel() / g() > 3.0) {
-        set a to a * ((1.0 / (accel() / g())) * 3.0).
+    declare local maxBurnHeight to burnTime * speed.
+    set burnHeight to (speed^2) / (2*accel()).
+    
+    if(burnHeight > maxBurnHeight and bottomAlt > 250) {
+        print "Tank-Burn Alt : " + round(maxBurnHeight, 0) + "m <-- " + round(burnHeight, 0) + "m               " at (2, 4).
+        set burnHeight to maxBurnHeight.
+    } else { 
+        print "Burn Alt      : " + round(burnHeight, 0) + "m                          " at (2, 4).
     }
 
-    if(speed > currentDeltaV or a < 0.0) {
-        if(ship:body:atm:exists) {
-            print "(!) ATM break : ...let ATM do the job " at (2, 4).
-            set burnHeight to 0.
-        } else {
-            declare dvh to currentDeltaV / (accel() - g()) * (speed * -1.0). 
-            set burnHeight to dvh.
-            print "(!) Burn Alt  : " + round(dvh, 0) + "m                    " at (2, 4).
-        }
-
-        if(not plandDone) return true.
-    }
-
-    declare local bh to ((speed^2) / (2*a)).
-
-    print "Burn Alt      : " + round(bh, 0)              + "m                " at (2, 4).
-
-    set burnHeight to bh.
     if(not plandDone) return true.
 }
 

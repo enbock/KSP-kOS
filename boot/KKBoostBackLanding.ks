@@ -5,42 +5,44 @@ global mainWasStarted to true.
 global startPowerlandWithVSpeed to -5.
 global ignoreFlightState to true.
 
+clearScreen.
 copyPath("0:/mainLib", "").
 runOncePath("mainLib").
+core:part:getmodule("kOSProcessor"):doevent("Close Terminal").
 
 copyPath("0:/KK4TEE/library", "").
 copyPath("0:/KK4TEE/runmodes", "").
 
 RUN library.
-BLANKSLATE().
-
 
 set terminal:charheight to 16.
-set terminal:width to 50.
+set terminal:width to 30.
 set terminal:height to 5.
-core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
 
 print "KK Boost Back v1.0.0".
-set steeringData to ORIENTTOVECTOR_INIT(0.05, 0.05, 0.3).
-GYROINIT(ship:altitude, 30). //Set the ship height, maxTargetGeeforce
+BackBoostInit().
 
 print "Wait for start...".
 wait until ship:verticalspeed > 5.
 print "Wait for decouple...".
 set startParts to SHIP:PARTS:length.
 wait until SHIP:PARTS:length < startParts.
-set BoostBackTimelimit to 180.
 
-set terminal:width to 50.
-set terminal:height to 35.
-set RUNMODE to 20.
+set terminal:width to 30.
+set terminal:height to 10.
+set RUNMODE to 1.
 
-//ON AG10 {SET RUNMODE to -1. } //End program
-
+core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
 clearScreen.
+print "KK Boost Back v1.0.0".
 until RUNMODE < 0 {
     PRINTTOSCREEN().
-    //wait 0.001.
+    wait 0.
     RUN runmodes.
-    lock throttle to TVAL. // Apply engines
 }
+
+wait until RUNMODE = -1.
+
+brakes on.
+lock steering to ship:srfretrograde.
+run pland.
