@@ -11,10 +11,6 @@ declare function cirecleDistance {
 }
     
 declare function BackBoostInit{
-     set tAP to 250000.
-     set tPe to 250000.
-     set atmoHeight to 70000.
-
      //set SEALEVELGRAVITY to (constant():G * body:mass) / body:radius^2.
      lock GRAVITY to g(). //SEALEVELGRAVITY / ((body:radius+ALTITUDE) / body:radius)^2.
      set landingTarget to SHIP:GEOPOSITION.
@@ -38,7 +34,7 @@ declare function PRINTTOSCREEN {
      set screenline to screenline + 1.
      print "Time to target  : " + round(groundReachTime, 2) + "       " at (2,screenline).
      set screenline to screenline + 1.
-     print "Angle to target : " + round(angleToTarget, 2) + "    " at (2,screenline).
+     print "Dist.Angl. to t.: " + round(angleToTarget, 2) + "    " at (2,screenline).
      set screenline to screenline + 1.
      print "Angle to fore   : " + round(VANG(BoostBackVector, fore), 2) + "       " at (2,screenline).
 }

@@ -12,7 +12,10 @@ if (engineSafety = 0) {
     if (angleToTarget < 150) set TVAL to 0.2 + (1/150 * angleToTarget).
 }
 
-if (groundReachTime < fallTime and angleToTarget < 41) { 
+set landGround to 47.
+set landInWater to 55.
+
+if (groundReachTime < fallTime and angleToTarget < landGround) { 
     set TVAL to 0. 
     set engineSafety to 1.
     rcs on.
