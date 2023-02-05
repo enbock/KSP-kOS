@@ -6,7 +6,8 @@ copyPath("0:/start", "").
 
 core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
 wait 0.1.
-print "Main-Lib 2.0.0".
+print "Main-Lib 2.0.1".
+RCS on.
 
 global function startRoutine {
     if(ship:status = "PRELAUNCH" or ship:status = "LANDED") run start.

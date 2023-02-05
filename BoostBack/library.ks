@@ -17,16 +17,15 @@ declare function BackBoostInit{
 
      lock shipLatLng to SHIP:GEOPOSITION.
      lock fallTime to (((-VERTICALSPEED) - sqrt(VERTICALSPEED^2-(2 * (-GRAVITY) * ship:altitude ))) /  (-GRAVITY)).
-     lock groundReachTime to cirecleDistance(shipLatLng,landingTarget) / GROUNDSPEED.
-     lock BoostBackVector to landingTarget:ALTITUDEPOSITION(max(landingTarget:TERRAINHEIGHT, 0) + ALTITUDE).
+     lock groundReachTime to cirecleDistance(shipLatLng, landingTarget) / GROUNDSPEED.
+     lock BoostBackVector to landingTarget:ALTITUDEPOSITION(max(landingTarget:TERRAINHEIGHT, 0) + ALTITUDE * 0.8).
      lock fore to ship:facing:vector.
      lock angleToTarget to VANG(BoostBackVector, VELOCITY:SURFACE).
-    
      set engineSafety to 1. 
      set tval to 0.
 }
 
-declare function PRINTTOSCREEN {
+declare function bbOutput {
      set screenline to 2.
      print "Throttle        : " + round(TVAL * 100, 2) + "%       " at (2,screenline).
      set screenline to screenline + 2.

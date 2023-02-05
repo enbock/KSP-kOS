@@ -17,11 +17,8 @@ local avoidEnginesStopUnderTime to 15.
 
 set burnHeight to 0.0.
 
-if(ship:body:name = "Kerbin") {
-}
-
 clearScreen.
-print "Powered landing v4.0.0".
+print "Powered landing v4.0.1".
 print "Ready.".
 wait 0.
 
@@ -41,23 +38,41 @@ WHEN not plandDone THEN {
     return true.
 }
 
-local currentDeltaV to SHIP:STAGEDELTAV(SHIP:STAGENUM):CURRENT.
+lock stageDeltaV to ship:deltaV:current. //SHIP:STAGEDELTAV(SHIP:STAGENUM):CURRENT.
+local currentDeltaV to 0.
+local lastDeltaV to 0.
 local lastMass to ship:mass.
-local startDeltaV to 0.
-local startTank to 0.
+lock tankAmount to stage:resourcesLex["LiquidFuel"]:amount.
 
-when ((currentDeltaV > SHIP:STAGEDELTAV(SHIP:STAGENUM):CURRENT and round(SHIP:STAGEDELTAV(SHIP:STAGENUM):CURRENT,0) > 0) or round(currentDeltaV,0) = 0) and lt = 0 then {
-    set currentDeltaV to SHIP:STAGEDELTAV(SHIP:STAGENUM):CURRENT.
-    set startDeltaV to currentDeltaV.
-    set startTank to stage:resourcesLex["LiquidFuel"]:amount.
-    set lastMass to ship:mass.
+local startParts to SHIP:PARTS:length.
+local numStatges to 0.
+
+when SHIP:PARTS:length <> startParts then {
+    set startParts to SHIP:PARTS:length.
+    set numStatges to numStatges + 1.
+
+    print "Staging #" + numStatges + " detected.      " at (0,4).
+
+    set currentDeltaV to 0.
+    set lastDeltaV to 0.
+    lock steering to ship:srfretrograde.
+
     return true.
 }
+
+when ((currentDeltaV > stageDeltaV and round(stageDeltaV,0) > 0) or currentDeltaV = 0) and lt = 0 then {
+    set currentDeltaV to stageDeltaV.
+    set lastDeltaV to currentDeltaV.
+    set lastMass to ship:mass.
+
+    return true.
+}
+
 
 when lt = 0 then {
     print "S-Speed       : " + round(ship:velocity:surface:mag, 0) + "m/s     " at (2, 6).
     print "V-Speed       : " + round(ship:verticalspeed * -1.0, 0) + "m/s     " at (2, 7).
-    print "Tank          : " + round(stage:resourcesLex["LiquidFuel"]:amount, 0) +" ("+ round(currentDeltaV, 0) + "m/s dV)     " at (2, 10).
+    print "Tank          : " + round(tankAmount, 0) +" ("+ round(currentDeltaV, 0) + "m/s dV)     " at (2, 10).
 
     if(not plandDone) return true.
 }
@@ -66,13 +81,11 @@ when lt = 0 then {
 wait until ship:verticalspeed < startPowerlandWithVSpeed and (ship:status = "SUB_ORBITAL" or ignoreFlightState = true).
 local bottomAlt to ship:bounds:bottomaltradar.
 set currentDeltaV to currentDeltaV / (1/lastMass * ship:mass).
-set startDeltaV to currentDeltaV.
-set startTank to stage:resourcesLex["LiquidFuel"]:amount.
+set lastDeltaV to currentDeltaV.
 
-when ship:deltaV:current > 0 and lt = 0 then {
-    set currentDeltaV to ship:deltaV:current.
-    set startDeltaV to currentDeltaV.
-    set startTank to stage:resourcesLex["LiquidFuel"]:amount.
+when stageDeltaV > 0 and lt = 0 then {
+    set currentDeltaV to stageDeltaV.
+    set lastDeltaV to currentDeltaV.
     if(not plandDone) return true.
 } 
 
@@ -82,13 +95,12 @@ function timeToImpactCalc {
 local timeToImpact to timeToImpactCalc().
 
 function isStartBurnCalc {
-    //declare local vs to ship:verticalspeed * -1.0.
-    return bottomAlt < burnHeight. // + vs.
+    return bottomAlt < burnHeight.
 }
 local isStartBurn to isStartBurnCalc().
 
 when lt = 0 then {
-    set currentDeltaV to startDeltaV * (1 / startTank * stage:resourcesLex["LiquidFuel"]:amount).
+    set currentDeltaV to lastDeltaV.
     if (currentDeltaV = 0) {
         set currentDeltaV to 500.
     }
@@ -105,7 +117,7 @@ when lt = 0 then {
     
 	declare local surSpeed to ship:velocity:surface:mag.
     declare local vs to ship:verticalspeed * -1.0.
-    declare local speed to sqrt(vs^2 + surSpeed^2). // / 3 + (vs / 3) * 2.
+    declare local speed to sqrt(vs^2 + surSpeed^2).
     declare local burnTime to fuelBurnTime().
 
     declare local maxBurnHeight to burnTime * speed.

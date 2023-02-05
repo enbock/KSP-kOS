@@ -12,7 +12,6 @@ global maxQ to 0.2.
 global minTimeToApoapsis to 10.
 global maxTimeToApoapsis to 60.
 global ag2DeployAt to 74000.
-global powerLandFuelPercentage to 0.3.
 global ignoredSolidFuel to 100.
 global waitTimeBetweenStages to 2.
 global minThrust to 0.25.
@@ -32,7 +31,7 @@ function isApoapsisReached {
 }
 
 clearscreen.
-print "Start v1.2.2".
+print "Start v1.3.0 "+powerLandFuelPercentage.
 global targetAngle to 0.0.
 global startInFlight to ship:velocity:surface:mag > 100.
 global orbitDone to startInFlight and isApoapsisReached().
@@ -45,14 +44,12 @@ if (not startInFlight) {
 
 wait until ship:verticalspeed > 5.
 
-local powerLandFuel to round(stage:resourcesLex["LiquidFuel"]:capacity * powerLandFuelPercentage, 0).
+lock powerLandFuel to round(stage:resourcesLex["LiquidFuel"]:capacity * powerLandFuelPercentage, 0).
 local corePos to 5.
 WHEN not orbitDone and not isApoapsisReached() and not startInFlight THEN {
 
-    set powerLandFuel to round(stage:resourcesLex["LiquidFuel"]:capacity * powerLandFuelPercentage, 0).
-
-    PRINT "TWR    : " + round(twr(), 2) + "    " at (0, corePos).
-    PRINT "L-Fuel : " + round(stage:resourcesLex["LiquidFuel"]:amount - powerLandFuel, 0) + "    " at (0, corePos + 1).
+    PRINT "TWR    : " + round(twr(), 2) + "     " at (0, corePos).
+    PRINT "L-Fuel : " + round(stage:resourcesLex["LiquidFuel"]:amount, 0) + "    " at (0, corePos + 1).
     PRINT "S-Fuel : " + round(stage:resourcesLex["SolidFuel"]:amount, 0) + "    " at (0, corePos + 2).
     
     PRINT "Speed  : " + round(ship:velocity:orbit:mag, 1) + "m/s     " at (20, corePos).
@@ -89,21 +86,23 @@ when alt:radar > 100 and gear then {
 local burnPos to 15.
 print "--== Burning ==--" at (0, burnPos).
 print "Multipliers:" at (2, burnPos+3).
-when not orbitDone and 
-    not startInFlight and 
-    stage:resourcesLex["LiquidFuel"]:amount <= (0.025+powerLandFuel) and 
-    (stage:resourcesLex["SolidFuel"]:amount - ignoredSolidFuel) <= 0.025 and 
-    ship:stagenum > 0
+when not orbitDone 
+    and not startInFlight 
+    and stage:resourcesLex["LiquidFuel"]:amount <= (0.025+powerLandFuel) 
+    and (stage:resourcesLex["SolidFuel"]:amount - ignoredSolidFuel) <= 0.025 
+    and ship:stagenum > 0
 then {
-
     print "Stage " + ship:stagenum + " at " + round(alt:radar, 2) at (2, burnPos + 1).
     lock throttle to 0.
     set oldThrottle to 1.0.
     list engines in MyList.
     FOR e IN MyList {  set e:THRUSTLIMIT to 100. }
+    SAS on.
+    set powerLandFuelPercentage to 0.1.
     wait 0.5.
     stage.
     wait waitTimeBetweenStages.
+    SAS off.
     
     return true.
 }
@@ -197,6 +196,8 @@ if (not orbitDone) {
     clearScreen.
     print "Orbital mode.".
     print "Wait for manouver...".
+    print "If the script is crashing now, the you can not use manouver nodes yet.".
+    print "Continue your carrier to unlock.".
 
     set needVelocity to sqrt(body:mu / (body:radius + targetOrbit)).
     LOCAL timeToApoapsis to time:seconds + eta:apoapsis.
