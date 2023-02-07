@@ -13,7 +13,12 @@ set terminal:width to 48.
 set terminal:height to 14.
 global powerLandFuelPercentage to 0.1.
 
-print "Bootser v1.0.5".
-wait 1.
+print "Bootser v1.1.0".
+print "Wait for start...".
+wait until ship:verticalspeed > 5.
+
+print "Wait for decouple...".
+local startParts to SHIP:PARTS:length.
+wait until SHIP:PARTS:length <> startParts.
 
 run pland.

@@ -6,7 +6,7 @@ copyPath("0:/start", "").
 
 core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
 wait 0.1.
-print "Main-Lib 2.0.1".
+print "Main-Lib v2.1.0".
 RCS on.
 
 global function startRoutine {
@@ -33,8 +33,12 @@ global function gravitationForce {
     return ship:mass * g().
 }
 
+global function shipOrientedGravityForce {
+    return  gravitationForce() * (1 / 90 * shipPitch()).
+}
+
 global function shipForce {
-    return ship:availableThrust - (gravitationForce() * (1 / 90 * shipPitch())).
+    return ship:availableThrust - shipOrientedGravityForce().
 }
 
 global function accel {

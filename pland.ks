@@ -18,7 +18,7 @@ local avoidEnginesStopUnderTime to 15.
 set burnHeight to 0.0.
 
 clearScreen.
-print "Powered landing v4.0.1".
+print "Powered landing v4.1.0".
 print "Ready.".
 wait 0.
 
@@ -39,9 +39,6 @@ WHEN not plandDone THEN {
 }
 
 lock stageDeltaV to ship:deltaV:current. //SHIP:STAGEDELTAV(SHIP:STAGENUM):CURRENT.
-local currentDeltaV to 0.
-local lastDeltaV to 0.
-local lastMass to ship:mass.
 lock tankAmount to stage:resourcesLex["LiquidFuel"]:amount.
 
 local startParts to SHIP:PARTS:length.
@@ -53,17 +50,7 @@ when SHIP:PARTS:length <> startParts then {
 
     print "Staging #" + numStatges + " detected.      " at (0,4).
 
-    set currentDeltaV to 0.
-    set lastDeltaV to 0.
     lock steering to ship:srfretrograde.
-
-    return true.
-}
-
-when ((currentDeltaV > stageDeltaV and round(stageDeltaV,0) > 0) or currentDeltaV = 0) and lt = 0 then {
-    set currentDeltaV to stageDeltaV.
-    set lastDeltaV to currentDeltaV.
-    set lastMass to ship:mass.
 
     return true.
 }
@@ -72,7 +59,7 @@ when ((currentDeltaV > stageDeltaV and round(stageDeltaV,0) > 0) or currentDelta
 when lt = 0 then {
     print "S-Speed       : " + round(ship:velocity:surface:mag, 0) + "m/s     " at (2, 6).
     print "V-Speed       : " + round(ship:verticalspeed * -1.0, 0) + "m/s     " at (2, 7).
-    print "Tank          : " + round(tankAmount, 0) +" ("+ round(currentDeltaV, 0) + "m/s dV)     " at (2, 10).
+    print "Tank          : " + round(tankAmount, 0) +"      " at (2, 10).
 
     if(not plandDone) return true.
 }
@@ -80,12 +67,8 @@ when lt = 0 then {
 
 wait until ship:verticalspeed < startPowerlandWithVSpeed and (ship:status = "SUB_ORBITAL" or ignoreFlightState = true).
 local bottomAlt to ship:bounds:bottomaltradar.
-set currentDeltaV to currentDeltaV / (1/lastMass * ship:mass).
-set lastDeltaV to currentDeltaV.
 
 when stageDeltaV > 0 and lt = 0 then {
-    set currentDeltaV to stageDeltaV.
-    set lastDeltaV to currentDeltaV.
     if(not plandDone) return true.
 } 
 
@@ -100,10 +83,6 @@ function isStartBurnCalc {
 local isStartBurn to isStartBurnCalc().
 
 when lt = 0 then {
-    set currentDeltaV to lastDeltaV.
-    if (currentDeltaV = 0) {
-        set currentDeltaV to 500.
-    }
     set isStartBurn to isStartBurnCalc().
     set timeToImpact to timeToImpactCalc().
     

@@ -31,7 +31,7 @@ function isApoapsisReached {
 }
 
 clearscreen.
-print "Start v1.3.0 "+powerLandFuelPercentage.
+print "Start v1.3.1 ".
 global targetAngle to 0.0.
 global startInFlight to ship:velocity:surface:mag > 100.
 global orbitDone to startInFlight and isApoapsisReached().

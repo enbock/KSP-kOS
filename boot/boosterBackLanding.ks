@@ -9,7 +9,7 @@ global powerLandFuelPercentage to 0.3.
 clearScreen.
 copyPath("0:/mainLib", "").
 copyPath("0:/BoostBack/library", "").
-copyPath("0:/BoostBack/runmodes", "").
+copyPath("0:/BoostBack/boostBack", "").
 runOncePath("mainLib").
 runOncePath("library").
 
@@ -37,7 +37,7 @@ clearScreen.
 until RUNMODE < 0 {
     bbOutput().
     wait 0.
-    RUN runmodes.
+    RUN boostBack.
 }
 
 wait until RUNMODE = -1.

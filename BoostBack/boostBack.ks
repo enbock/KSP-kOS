@@ -4,7 +4,7 @@ RCS on.
 SAS off.
 lock steering to BoostBackVector:VEC.
 
-if engineSafety = 1 and  VANG(BoostBackVector, fore) <= 1 {
+if engineSafety = 1 and  VANG(BoostBackVector, fore) <= 3 {
     set engineSafety to 0.
 }
 if (engineSafety = 0) {
