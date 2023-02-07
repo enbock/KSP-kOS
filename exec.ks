@@ -19,7 +19,7 @@ print "Node execution v1.0.1".
 print "Ready.".
 
 function isFuelEmpy {
-    return stage:resourcesLex["LiquidFuel"]:amount <= 0.025 and stage:resourcesLex["SolidFuel"]:amount <= 0.025.
+    return ship:deltaV:current <= 0.025.
 }
 
 function getBurnDuration {

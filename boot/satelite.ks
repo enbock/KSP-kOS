@@ -22,4 +22,4 @@ wait until ship:status = "ORBITING".
 
 core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
 wait 5.
-run exec.
+startRoutine().
