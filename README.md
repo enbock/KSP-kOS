@@ -13,3 +13,7 @@ How to use in game
 
 
 [![Watch the video](https://img.youtube.com/vi/GApod0AL3mQ/hqdefault.jpg)](https://www.youtube.com/watch?v=GApod0AL3mQ)
+
+## Limitations
+
+* The main-Script must be placed at the most upper stage. (Required for fuel detection)

@@ -15,7 +15,7 @@ global inManouver to false.
 local execDone to false.
 
 clearScreen.
-print "Node execution v1.0.1".
+print "Node execution v1.0.2".
 print "Ready.".
 
 function isFuelEmpy {
@@ -112,8 +112,9 @@ when burnDone and inManouver then {
 }
 
 when not execDone and isFuelEmpy() then {
-    stage.
-    wait 1.0.
+    print "Out of fuel! Please stage manually if needed and possible.".
+    //stage.
+    wait 3.0.
     set execDone to isFuelEmpy().
     return true.
 }

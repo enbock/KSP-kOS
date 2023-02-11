@@ -18,7 +18,7 @@ local avoidEnginesStopUnderTime to 15.
 set burnHeight to 0.0.
 
 clearScreen.
-print "Powered landing v4.1.0".
+print "Powered landing v4.1.2".
 print "Ready.".
 wait 0.
 
@@ -65,7 +65,7 @@ when lt = 0 then {
 }
 
 
-wait until ship:verticalspeed < startPowerlandWithVSpeed and (ship:status = "SUB_ORBITAL" or ignoreFlightState = true).
+wait until ship:verticalspeed < startPowerlandWithVSpeed and (ship:status = "SUB_ORBITAL" or ignoreFlightState = true or altitude < 20000).
 local bottomAlt to ship:bounds:bottomaltradar.
 
 when stageDeltaV > 0 and lt = 0 then {
@@ -119,9 +119,16 @@ WHEN lt2 = 0 THEN {
 }
 
 when not plandDone and lt = 0 then {
-    lock steering to ship:srfretrograde.
     set SAS to false.
-    set brakes to ship:body:atm:exists.
+    lock steering to ship:srfretrograde.
+}
+
+when not plandDone and lt = 0 and ship:body:atm:exists then {
+
+    if (body:name = "Kerbin" and ship:altitude < 60000 and ship:altitude > 20000) set brakes to false.
+    else set brakes to ship:body:atm:exists.
+
+    return true.
 }
 
 when not plandDone and ship:body:atm:exists and ship:altitude < ship:body:atm:height then {
