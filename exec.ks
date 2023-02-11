@@ -15,7 +15,7 @@ global inManouver to false.
 local execDone to false.
 
 clearScreen.
-print "Node execution v1.0.2".
+print "Node execution v1.0.3".
 print "Ready.".
 
 function isFuelEmpy {
@@ -100,6 +100,7 @@ when not burnDone and inManouver then {
 when burnDone and inManouver then {
     lock throttle to 0.
     print "Main engine cut off.               " at (2, 10).
+
     if(hasNode) remove nextNode.
     unlock steering.
     unlock throttle.
@@ -112,10 +113,11 @@ when burnDone and inManouver then {
 }
 
 when not execDone and isFuelEmpy() then {
-    print "Out of fuel! Please stage manually if needed and possible.".
+    print "Out of fuel! Please stage manually if needed and possible." at (0, 3).
     //stage.
-    wait 3.0.
+    wait 5.0.
     set execDone to isFuelEmpy().
+    if (not execDone) print "                                                          " at (0, 3).
     return true.
 }
 
