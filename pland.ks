@@ -18,7 +18,7 @@ local avoidEnginesStopUnderTime to 15.
 set burnHeight to 0.0.
 
 clearScreen.
-print "Powered landing v4.1.2".
+print "Powered landing v4.1.3".
 print "Ready.".
 wait 0.
 
@@ -139,7 +139,7 @@ when not plandDone and bottomAlt < 10 then {
     lock steering to up.
 }
 
-when not plandDone and bottomAlt < (ship:verticalspeed * -1) * 7.0 and not gear then {
+when not plandDone and bottomAlt < (ship:verticalspeed * -1) * 5.0 and not gear then {
     toggle gear.
 }
 

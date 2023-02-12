@@ -15,7 +15,7 @@ global inManouver to false.
 local execDone to false.
 
 clearScreen.
-print "Node execution v1.0.3".
+print "Node execution v1.0.4".
 print "Ready.".
 
 function isFuelEmpy {
@@ -112,26 +112,17 @@ when burnDone and inManouver then {
     return true.
 }
 
-when not execDone and isFuelEmpy() then {
-    print "Out of fuel! Please stage manually if needed and possible." at (0, 3).
-    //stage.
-    wait 5.0.
-    set execDone to isFuelEmpy().
-    if (not execDone) print "                                                          " at (0, 3).
-    return true.
-}
-
-when not execDone and ship:periapsis < 0 and ship:verticalspeed < 0 and not hasNode then {
+when not execDone and (ship:status = "SUB_ORBITAL" or ship:status = "FLYING") and ship:verticalspeed < -50 then {
     set execDone to true.
-    return true.
+    return not execDone.
 }
 
 wait until execDone.
 clearScreen.
 print "Node execution done.".
 wait 1.0.
-if (isFuelEmpy()) run land.
-else run pland.
+copyPath("0:/boot/main", "1:/boot/main").
+run "boot/main".
 
 } else {
     copyPath("0:/boot/main", "1:/boot/main").

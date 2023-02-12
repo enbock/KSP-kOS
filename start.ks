@@ -12,7 +12,7 @@ global maxQ to 0.2.
 global minTimeToApoapsis to 10.
 global maxTimeToApoapsis to 60.
 global ag2DeployAt to 74000.
-global ignoredSolidFuel to 100.
+global ignoredSolidFuel to 0.
 global waitTimeBetweenStages to 2.
 global minThrust to 0.25.
 
@@ -31,7 +31,7 @@ function isApoapsisReached {
 }
 
 clearscreen.
-print "Start v1.3.1 ".
+print "Start v1.3.2 ".
 global targetAngle to 0.0.
 global startInFlight to ship:velocity:surface:mag > 100.
 global orbitDone to startInFlight and isApoapsisReached().
