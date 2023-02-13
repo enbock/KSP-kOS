@@ -11,8 +11,7 @@ declare function cirecleDistance {
 }
     
 declare function BackBoostInit{
-     //set SEALEVELGRAVITY to (constant():G * body:mass) / body:radius^2.
-     lock GRAVITY to g(). //SEALEVELGRAVITY / ((body:radius+ALTITUDE) / body:radius)^2.
+     lock GRAVITY to g().
      set landingTarget to SHIP:GEOPOSITION.
 
      lock shipLatLng to SHIP:GEOPOSITION.

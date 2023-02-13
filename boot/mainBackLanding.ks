@@ -13,6 +13,6 @@ global startDirection to 90.
 global startPowerlandWithVSpeed to -5.
 global mainWasStarted to true.
 global ignoreFlightState to false.
-global powerLandFuelPercentage to 0.3.
+global powerLandFuelPercentage to 0.2.
 
 startRoutine().

@@ -14,7 +14,7 @@ runOncePath("mainLib").
 runOncePath("library").
 
 BackBoostInit().
-print "Boost Back v1.0.2".
+print "Boost Back v1.0.4".
 print "Ready.".
 
 set terminal:charheight to 16.

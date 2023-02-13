@@ -4,7 +4,7 @@ RCS on.
 SAS off.
 lock steering to BoostBackVector:VEC.
 
-if engineSafety = 1 and  VANG(BoostBackVector, fore) <= 3 {
+if engineSafety = 1 and  VANG(BoostBackVector, fore) <= 5 {
     set engineSafety to 0.
 }
 if (engineSafety = 0) {
@@ -13,10 +13,10 @@ if (engineSafety = 0) {
     if (angleToTarget < 150) set TVAL to 0.2 + (1/150 * angleToTarget).
 }
 
-set landGround to 46.5.
-set landInWater to 55.
+set landOnWater to 75.
+set landOnStartingPlace to 55.
 
-if (groundReachTime < fallTime and angleToTarget < landInWater) { 
+if (groundReachTime < fallTime * 2.3 and angleToTarget < landOnWater) { 
     set TVAL to 0. 
     set engineSafety to 1.
     rcs on.
