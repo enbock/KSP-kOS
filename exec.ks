@@ -15,12 +15,8 @@ global inManouver to false.
 local execDone to false.
 
 clearScreen.
-print "Node execution v1.0.4".
+print "Node execution v1.0.5".
 print "Ready.".
-
-function isFuelEmpy {
-    return ship:deltaV:current <= 0.025.
-}
 
 function getBurnDuration {
     local manouver to nextNode.
@@ -77,20 +73,19 @@ when not burnDone and inManouver then {
     }
     local manouver to nextNode.
     lock steering to manouver.
-    set deltaV to round(manouver:deltav:mag, 4).
-    print "Delta-V: " + round(deltaV, 2) + "m/s                 " at (2, 10).
+    set manouverDeltaV to round(manouver:deltav:mag, 4).
+    print "Delta-V: " + round(manouverDeltaV, 2) + "m/s                 " at (2, 10).
     printNode().
-    if(isFuelEmpy()) print "No fuel left!                    " at (2, 13).
     
-    if (deltaV < 0.1 or oldDeltaV < deltaV or isFuelEmpy()) {
+    if (manouverDeltaV < 0.1 or oldDeltaV < manouverDeltaV) {
         set burnDone to true.
-    } else if (deltaV < 2.0) {
+    } else if (manouverDeltaV < 2.0) {
         lock throttle to minThustPercent.
-    } else if (deltaV < 7.0) {
-        lock throttle to max(minThustPercent, 1.0 / 4.0 * (deltaV - 2.0)).
+    } else if (manouverDeltaV < 7.0) {
+        lock throttle to max(minThustPercent, 1.0 / 4.0 * (manouverDeltaV - 2.0)).
     } else lock throttle to 1.0.
 
-    set oldDeltaV to deltaV.
+    set oldDeltaV to manouverDeltaV.
     lock steering to manouver.
     wait 0.
 

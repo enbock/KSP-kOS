@@ -18,7 +18,7 @@ local avoidEnginesStopUnderTime to 15.
 set burnHeight to 0.0.
 
 clearScreen.
-print "Powered landing v4.1.3".
+print "Powered landing v4.1.5".
 print "Ready.".
 wait 0.
 
@@ -125,7 +125,7 @@ when not plandDone and lt = 0 then {
 
 when not plandDone and lt = 0 and ship:body:atm:exists then {
 
-    if (body:name = "Kerbin" and ship:altitude < 60000 and ship:altitude > 20000) set brakes to false.
+    if (body:name = "Kerbin" and ship:altitude < 50000 and ship:altitude > 20000) set brakes to false.
     else set brakes to ship:body:atm:exists.
 
     return true.
@@ -139,8 +139,9 @@ when not plandDone and bottomAlt < 10 then {
     lock steering to up.
 }
 
-when not plandDone and bottomAlt < (ship:verticalspeed * -1) * 5.0 and not gear then {
-    toggle gear.
+when not plandDone and bottomAlt < (ship:verticalspeed * -1) * 4.0 and not gear then {
+    gear on.
+    return true.
 }
 
 when lt = 0 and not onceUnderTime and isStartBurn then { // breaking
