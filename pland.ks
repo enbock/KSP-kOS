@@ -14,11 +14,12 @@ local onceUnderTime to false.
 
 local stopEnginesUnder to 0.7.
 local avoidEnginesStopUnderTime to 15.
+local AIRBREAKSused to false.
 
 set burnHeight to 0.0.
 
 clearScreen.
-print "Powered landing v4.1.5".
+print "Powered landing v4.2.0".
 print "Ready.".
 wait 0.
 
@@ -125,7 +126,7 @@ when not plandDone and lt = 0 then {
 
 when not plandDone and lt = 0 and ship:body:atm:exists then {
 
-    if (body:name = "Kerbin" and ship:altitude < 50000 and ship:altitude > 20000) set brakes to false.
+    if (body:name = "Kerbin" and ship:altitude < 50000 and ship:altitude > 20000 and AIRBREAKSused) set brakes to false.
     else set brakes to ship:body:atm:exists.
 
     return true.

@@ -15,7 +15,7 @@ global inManouver to false.
 local execDone to false.
 
 clearScreen.
-print "Node execution v1.0.5".
+print "Node execution v1.0.7".
 print "Ready.".
 
 function getBurnDuration {
@@ -96,7 +96,7 @@ when burnDone and inManouver then {
     lock throttle to 0.
     print "Main engine cut off.               " at (2, 10).
 
-    if(hasNode) remove nextNode.
+    if(hasNode and SHIP:DELTAV:CURRENT > 0) remove nextNode.
     unlock steering.
     unlock throttle.
     SET SHIP:CONTROL:PILOTMAINTHROTTLE TO 0.

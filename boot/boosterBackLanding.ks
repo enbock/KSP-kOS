@@ -28,6 +28,7 @@ print "Wait for decouple...".
 local startParts to SHIP:PARTS:length.
 wait until SHIP:PARTS:length <> startParts.
 
+wait 15.
 set terminal:width to 30.
 set terminal:height to 10.
 set RUNMODE to 1.

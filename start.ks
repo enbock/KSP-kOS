@@ -13,7 +13,7 @@ global minTimeToApoapsis to 10.
 global maxTimeToApoapsis to 60.
 global ag2DeployAt to 74000.
 global ignoredSolidFuel to 0.
-global waitTimeBetweenStages to 2.
+global waitTimeBetweenStages to 8.
 global minThrust to 0.25.
 
 if (ship:body:name = "Mun") {
