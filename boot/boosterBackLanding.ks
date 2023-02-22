@@ -14,7 +14,7 @@ runOncePath("mainLib").
 runOncePath("library").
 
 BackBoostInit().
-print "Boost Back v1.0.4".
+print "Boost Back v1.0.5".
 print "Ready.".
 
 set terminal:charheight to 16.
@@ -28,7 +28,7 @@ print "Wait for decouple...".
 local startParts to SHIP:PARTS:length.
 wait until SHIP:PARTS:length <> startParts.
 
-wait 15.
+wait 10 * min(1, 1 / 60000 * altitude).
 set terminal:width to 30.
 set terminal:height to 10.
 set RUNMODE to 1.

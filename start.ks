@@ -31,7 +31,7 @@ function isApoapsisReached {
 }
 
 clearscreen.
-print "Start v1.3.2 ".
+print "Start v1.3.3 ".
 global targetAngle to 0.0.
 global startInFlight to ship:velocity:surface:mag > 100.
 global orbitDone to startInFlight and isApoapsisReached().
@@ -101,7 +101,7 @@ then {
     set powerLandFuelPercentage to 0.1.
     wait 0.5.
     stage.
-    wait waitTimeBetweenStages.
+    wait waitTimeBetweenStages * min(1, 1 / 60000 * altitude).
     SAS off.
     
     return true.
