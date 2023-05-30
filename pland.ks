@@ -19,7 +19,7 @@ local AIRBREAKSused to false.
 set burnHeight to 0.0.
 
 clearScreen.
-print "Powered landing v4.2.0".
+print "Powered landing v4.2.1".
 print "Ready.".
 wait 0.
 
@@ -45,13 +45,12 @@ lock tankAmount to stage:resourcesLex["LiquidFuel"]:amount.
 local startParts to SHIP:PARTS:length.
 local numStatges to 0.
 
+// Notice: Can be active on Multi-Stage-Construction!
 when SHIP:PARTS:length <> startParts then {
     set startParts to SHIP:PARTS:length.
     set numStatges to numStatges + 1.
 
     print "Staging #" + numStatges + " detected.      " at (0,4).
-
-    lock steering to ship:srfretrograde.
 
     return true.
 }
@@ -67,6 +66,9 @@ when lt = 0 then {
 
 
 wait until ship:verticalspeed < startPowerlandWithVSpeed and (ship:status = "SUB_ORBITAL" or ignoreFlightState = true or altitude < 20000).
+
+print "         " at (0,4).
+lock steering to ship:srfretrograde.
 local bottomAlt to ship:bounds:bottomaltradar.
 
 when stageDeltaV > 0 and lt = 0 then {
