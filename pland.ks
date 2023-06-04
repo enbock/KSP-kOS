@@ -13,13 +13,14 @@ local wantSpeed to 0.0.
 local onceUnderTime to false.
 
 local stopEnginesUnder to 0.7.
-local avoidEnginesStopUnderTime to 15.
+local stopEngineAtMaxHeightDifference to 100.
+local avoidEnginesStopUnderTime to 5.
 local AIRBREAKSused to false.
 
 set burnHeight to 0.0.
 
 clearScreen.
-print "Powered landing v4.2.1".
+print "Powered landing v4.3.0".
 print "Ready.".
 wait 0.
 
@@ -41,19 +42,6 @@ WHEN not plandDone THEN {
 
 lock stageDeltaV to ship:deltaV:current. //SHIP:STAGEDELTAV(SHIP:STAGENUM):CURRENT.
 lock tankAmount to stage:resourcesLex["LiquidFuel"]:amount.
-
-local startParts to SHIP:PARTS:length.
-local numStatges to 0.
-
-// Notice: Can be active on Multi-Stage-Construction!
-when SHIP:PARTS:length <> startParts then {
-    set startParts to SHIP:PARTS:length.
-    set numStatges to numStatges + 1.
-
-    print "Staging #" + numStatges + " detected.      " at (0,4).
-
-    return true.
-}
 
 
 when lt = 0 then {
@@ -156,6 +144,7 @@ when lt = 0 and not onceUnderTime and isStartBurn then { // breaking
 
     if(not plandDone) return true.
 }
+
 when onceUnderTime and lt = 0  then { // landing
     if ((ship:verticalspeed >= -0.1 or timeToImpact < 0.05) and bottomAlt < 10) {
         set wantSpeed to 0.
@@ -165,7 +154,14 @@ when onceUnderTime and lt = 0  then { // landing
         else set wantSpeed to 1.0 / bottomAlt * burnHeight.
     }
 
-    if (wantSpeed < stopEnginesUnder and avoidEnginesStopUnderTime < timeToImpact) {
+    declare local heightDiffernce to bottomAlt - burnHeight.
+
+    if (
+        (
+            wantSpeed < stopEnginesUnder or 
+            stopEngineAtMaxHeightDifference < heightDiffernce
+        ) and avoidEnginesStopUnderTime < timeToImpact
+    ) {
         set wantSpeed to 0.
         set onceUnderTime to false.
     }

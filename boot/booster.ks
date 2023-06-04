@@ -19,6 +19,5 @@ wait until ship:verticalspeed > 5.
 
 print "Wait for decouple...".
 local startParts to SHIP:PARTS:length.
-wait until SHIP:PARTS:length <> startParts.
-
+wait until isDecoupled().
 run pland.

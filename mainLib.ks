@@ -6,8 +6,15 @@ copyPath("0:/start", "").
 
 core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
 wait 0.1.
-print "Main-Lib v2.1.0".
+print "Main-Lib v2.2.0".
 RCS on.
+set CORE:PART:TAG to "kos_processor".
+
+
+global function isDecoupled {
+    SET shipProcessorList to SHIP:PARTSTAGGED("kos_processor").
+    return shipProcessorList:length = 1.
+}
 
 global function startRoutine {
     if(ship:status = "PRELAUNCH" or ship:status = "LANDED") run start.
@@ -21,11 +28,11 @@ global function startRoutine {
     else print "For status " + ship:status + " Jeb does not knew a script.".
 }
 
-function g {
+global function g {
     return  ship:body:mu / (ship:body:radius + ship:bounds:bottomaltradar) ^ 2.
 }
 
-function shipPitch {
+global function shipPitch {
   return 90 - vang(ship:up:vector, ship:facing:forevector).
 }
 

@@ -25,8 +25,7 @@ print "Wait for start...".
 wait until ship:verticalspeed > 5.
 
 print "Wait for decouple...".
-local startParts to SHIP:PARTS:length.
-wait until SHIP:PARTS:length <> startParts.
+wait until isDecoupled().
 
 wait 10 * min(1, 1 / 60000 * altitude).
 set terminal:width to 30.
