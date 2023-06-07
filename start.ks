@@ -31,7 +31,7 @@ function isApoapsisReached {
 }
 
 clearscreen.
-print "Start v1.3.3 ".
+print "Start v1.4.0 ".
 global targetAngle to 0.0.
 global startInFlight to ship:velocity:surface:mag > 100.
 global orbitDone to startInFlight and isApoapsisReached().
@@ -44,7 +44,7 @@ if (not startInFlight) {
 
 wait until ship:verticalspeed > 5.
 
-lock powerLandFuel to round(stage:resourcesLex["LiquidFuel"]:capacity * powerLandFuelPercentage, 0).
+lock powerLandFuel to round(stage:resourcesLex["LiquidFuel"]:capacity * powerLandFuelPercentage * min(1, (1 / targetOrbit) * (ship:altitude + targetOrbit * 0.3)), 0).
 local corePos to 5.
 WHEN not orbitDone and not isApoapsisReached() and not startInFlight THEN {
 
