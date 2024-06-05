@@ -13,14 +13,14 @@ local wantSpeed to 0.0.
 local onceUnderTime to false.
 
 local stopEnginesUnder to 0.7.
-local stopEngineAtMaxHeightDifference to 100.
+lock stopEngineAtMaxHeightDifference to ship:verticalspeed.
 local avoidEnginesStopUnderTime to 5.
 local AIRBREAKSused to false.
 
 set burnHeight to 0.0.
 
 clearScreen.
-print "Powered landing v4.3.0".
+print "Powered landing v4.3.1".
 print "Ready.".
 wait 0.
 
