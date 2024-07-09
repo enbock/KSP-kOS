@@ -7,11 +7,11 @@ local inManouver to false.
 local execDone to not hasNode.
 
 print "Warping to maneuver node...".
-set g to gui(300, 200).
-set g:x to -150.
-set g:y to -100.
-set g:draggable to true.
-set output to g:addlabel("Delty-V:").
+local gOutput to gui(300, 200).
+set gOutput:x to -150.
+set gOutput:y to -200.
+set gOutput:draggable to true.
+local output to gOutput:addlabel("Delty-V:").
 
 g:show().
 
@@ -21,31 +21,24 @@ function getBurnDuration {
 }
 
 if not execDone {
-  // Warp to 15 seconds before the maneuver node
   WARPTO(time:seconds + nextNode:eta - 10 - (getBurnDuration() / 2.0)).
 } 
 
 when not execDone and not hasNode then {
     set output:text to "No manouver planned.".
     set execDone to true.
-    return true.
+    return false.
 }
 
-when hasNode and burnDone and not inManouver and (nextNode:eta > getBurnDuration() / 2.0 + beginManouverAt) then {
-    set output:text to "Wait for next manouver.".
-    wait 1.
+set output:text to "Wait for next manouver.".
+wait 1.
+wait until hasNode and burnDone and not inManouver and (nextNode:eta > getBurnDuration() / 2.0 + beginManouverAt).
 
-    return true.
-}
-
-when hasNode and burnDone and not inManouver and (nextNode:eta <= getBurnDuration() / 2.0 + beginManouverAt) then {
-    local manouver to nextNode.
-    SAS off.
-    lock steering to manouver.
-    set output:text to "Wait for ignition.".
-
-    return true.
-}
+local manouver to nextNode.
+SAS off.
+lock steering to manouver.
+set output:text to "Wait for ignition.".
+wait until hasNode and burnDone and not inManouver and (nextNode:eta <= getBurnDuration() / 2.0 + beginManouverAt).
 
 when hasNode and burnDone and not inManouver and (nextNode:eta <= getBurnDuration() / 2.0) then {
     set output:text to "Main engine start. ".
@@ -55,13 +48,13 @@ when hasNode and burnDone and not inManouver and (nextNode:eta <= getBurnDuratio
     set burnDone to false.
     set inManouver to true.
 
-    return true.
+    return false.
 }
 
 when not burnDone and inManouver then {
     if(not hasNode) {
         set burnDone to true.
-        return true.
+        return false.
     }
     local manouver to nextNode.
     lock steering to manouver.
@@ -80,7 +73,7 @@ when not burnDone and inManouver then {
     lock steering to manouver.
     wait 0.
 
-    return true.
+    return not burnDone.
 }
 
 when burnDone and inManouver then {
@@ -90,25 +83,28 @@ when burnDone and inManouver then {
     if(hasNode) {
       remove nextNode.
     }
-    set execDone to not hasNode.
+    set execDone to true.
     unlock steering.
     unlock throttle.
     SET SHIP:CONTROL:PILOTMAINTHROTTLE TO 0.
     SAS on.
     set inManouver to false.
 
-    return true.
+    return false.
 }
 
 when not execDone and (ship:status = "SUB_ORBITAL" or ship:status = "FLYING") and ship:verticalspeed < -50 then {
     set execDone to true.
-    return not execDone.
+    return false.
 }
 
 wait until execDone or not hasNode.
 
-g:hide().
+lock throttle to 0.
+set execDone to true.
+set burnDone to true.
 unlock steering.
 unlock throttle.
 SET SHIP:CONTROL:PILOTMAINTHROTTLE TO 0.
 SAS on.
+gOutput:hide().

@@ -1,4 +1,4 @@
-core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
+//core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
 
 set g to gui(300, 200).
 

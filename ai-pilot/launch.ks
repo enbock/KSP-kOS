@@ -19,16 +19,16 @@ function setCircularizationNode {
   add orbitalNode.
 }
 
-set gOutput to gui(300, 400).
+local gOutput to gui(300, 400).
 set gOutput:x to -150.
 set gOutput:y to -300.
 set gOutput:draggable to true.
 
-set outputLabelAltitude to gOutput:addlabel("Altitude:").
-set outputLabelLiquidFuel to gOutput:addlabel("Liquid Fuel:").
-set outputLabelSolidFuel to gOutput:addlabel("Solid Fuel:").
-set outputLabelTargetApoapsis to gOutput:addlabel("Target Apoapsis: " + targetApoapsis + " meters").
-set outputLabelStatus to gOutput:addlabel("").
+local outputLabelAltitude to gOutput:addlabel("Altitude:").
+local outputLabelLiquidFuel to gOutput:addlabel("Liquid Fuel:").
+local outputLabelSolidFuel to gOutput:addlabel("Solid Fuel:").
+local outputLabelTargetApoapsis to gOutput:addlabel("Target Apoapsis: " + targetApoapsis + " meters").
+local outputLabelStatus to gOutput:addlabel("").
 
 gOutput:show().
 
@@ -110,6 +110,7 @@ lock throttle to 0.
 print "Launch complete!".
 set outputLabelStatus:text to "Launch complete!".
 
+gOutput:hide().
 unlock steering.
 unlock throttle.
 SET SHIP:CONTROL:PILOTMAINTHROTTLE TO 0.
