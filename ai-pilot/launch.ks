@@ -1,5 +1,9 @@
+parameter targetAltitude is 80000.
+parameter launchAngle is 90.
+parameter fuelBuffer is 0.1.
+
 set celestialBody to ship:body.
-set targetApoapsis to getLEO(celestialBody) + 10000.
+set targetApoapsis to targetAltitude.
 
 function getLEO {
   parameter b.
@@ -41,7 +45,7 @@ lock throttle to 1.
 wait until ship:altitude > 100.
 
 set turnStartAltitude to 0.01 * targetApoapsis.
-set startDirection to 90.
+set startDirection to launchAngle.
 
 set maxQ to 0.2.
 set minTimeToApoapsis to 10.
@@ -60,7 +64,7 @@ until isApoapsisReached() {
     local apoPercent to 1.0 / targetApoapsis * ship:apoapsis.
     local angle to 90.0 - (90.0 * apoPercent).
     if ship:altitude < turnStartAltitude {
-        lock steering to heading(90, 90).
+        lock steering to heading(launchAngle, 90).
     } else {
         lock steering to heading(startDirection, angle).
     }
@@ -69,7 +73,7 @@ until isApoapsisReached() {
     set outputLabelLiquidFuel:text to "Liquid Fuel: " + round(stage:resourcesLex["LiquidFuel"]:amount, 1).
     set outputLabelSolidFuel:text to "Solid Fuel: " + round(stage:resourcesLex["SolidFuel"]:amount, 1).
     
-    if stage:resourcesLex["LiquidFuel"]:amount <= 0.025 and stage:resourcesLex["SolidFuel"]:amount <= 0.025 and ship:stagenum > 0 {
+    if stage:resourcesLex["LiquidFuel"]:amount <= (fuelBuffer * stage:resourcesLex["LiquidFuel"]:capacity) and stage:resourcesLex["SolidFuel"]:amount <= 0.025 and ship:stagenum > 0 {
         stage.
         print "Staging...".
     }
