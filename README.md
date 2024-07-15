@@ -22,7 +22,7 @@ How to use in game
 Kurzer Überblick über die Skripte
 Die Skripte sind für die Steuerung von Raketen und Boostern in Kerbal Space Program mithilfe des kOS-Mods. Die Skripte sind auf verschiedene Aufgaben spezialisiert:
 
-1. `ai-pilot`:
+1. `ai-pilot`: Teils von KI geschriebener Code
    - `land.ks`: Berechnet die Höhe für einen Suicide Burn und führt die Landung durch.
    - `launch.ks`: Führt den Start und den Aufstieg in die Umlaufbahn durch.
    - `maneuver.ks`: Führt Manöverknoten aus.
