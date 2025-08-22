@@ -47,11 +47,11 @@ until false {
         local fuelBuffer to fuelBufferInput:text:tonumber() / 100.
 
         // Startskript mit den neuen Werten ausführen
-        runpath("0:/ai-pilot/launch.ks", targetAltitude, launchAngle, fuelBuffer).
+        runpath("0:/v2/launch.ks", targetAltitude, launchAngle, fuelBuffer).
     } else if isLandPressed {
-        runpath("0:/ai-pilot/land.ks").
+        runpath("0:/v2/land.ks").
     } else if isManeuverPressed {
-        runpath("0:/ai-pilot/maneuver.ks").
+        runpath("0:/v2/maneuver.ks").
     }
 
     wait 1.

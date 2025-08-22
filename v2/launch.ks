@@ -2,8 +2,10 @@ parameter targetAltitude is 80000.
 parameter launchAngle is 90.
 parameter fuelBuffer is 0.1.
 
-set celestialBody to ship:body.
-set targetApoapsis to targetAltitude.
+local targetApoapsis to body:radius * 1.1.
+if body:atm:exists {
+  set targetApoapsis to body:atm:height * 1.1.
+}
 
 function getLEO {
   parameter b.
@@ -14,7 +16,7 @@ function getLEO {
 }
 
 function setCircularizationNode {
-  set needVelocity to sqrt(body:mu / (body:radius + targetApoapsis)).
+  set needVelocity to sqrt(body:mu / (body:radius + targetAltitude)).
   LOCAL timeToApoapsis to time:seconds + eta:apoapsis.
   LOCAL velcityAtAposis to velocityAt(ship, timeToApoapsis):ORBIT:MAG.
   set restVelocity to needVelocity - velcityAtAposis.
@@ -111,7 +113,6 @@ until ship:apoapsis > targetApoapsis {
 setCircularizationNode().
 
 lock throttle to 0.
-print "Launch complete!".
 set outputLabelStatus:text to "Launch complete!".
 
 gOutput:hide().
