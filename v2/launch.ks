@@ -38,7 +38,6 @@ local outputLabelStatus to gOutput:addlabel("").
 
 gOutput:show().
 
-print "Launch sequence initiated.".
 set outputLabelStatus:text to "Launch sequence initiated.".
 
 stage.
@@ -75,9 +74,9 @@ until isApoapsisReached() {
     set outputLabelLiquidFuel:text to "Liquid Fuel: " + round(stage:resourcesLex["LiquidFuel"]:amount, 1).
     set outputLabelSolidFuel:text to "Solid Fuel: " + round(stage:resourcesLex["SolidFuel"]:amount, 1).
     
-    if stage:resourcesLex["LiquidFuel"]:amount <= (fuelBuffer * stage:resourcesLex["LiquidFuel"]:capacity) and stage:resourcesLex["SolidFuel"]:amount <= 0.025 and ship:stagenum > 0 {
+    if (stage:resourcesLex["LiquidFuel"]:amount <= (fuelBuffer * stage:resourcesLex["LiquidFuel"]:capacity) or (stage:resourcesLex["SolidFuel"]:amount <> 0 and stage:resourcesLex["SolidFuel"]:amount <= 0.025)) and ship:stagenum > 0 {
         stage.
-        print "Staging...".
+        set outputLabelStatus:text to "Staging...".
     }
     
     local newThrottle to 1.0.

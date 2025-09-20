@@ -14,6 +14,9 @@ set maneuverOutput:y to -100.
 set maneuverOutput:draggable to true.
 local output to maneuverOutput:addlabel("Delty-V:").
 
+set maneuverOutput:addbutton("STOP"):onclick to  {
+    set execDone to true.
+}.
 maneuverOutput:show().
 
 function getBurnDuration {
@@ -65,16 +68,16 @@ when not execDone then {
         lock throttle to 0.
         set output:text to "Main engine cut off.".
 
-        remove nextNode.
+        //remove nextNode.
         set execDone to true.
 
         return false.
     }
 
-    if (ship:status = "SUB_ORBITAL" or ship:status = "FLYING") and ship:verticalspeed < -50 {
-        set execDone to true.
-        return false.
-    }
+    //if (ship:status = "SUB_ORBITAL" or ship:status = "FLYING") and ship:verticalspeed < -50 {
+    //    set execDone to true.
+    //    return false.
+    //}
 
     return true.
 }

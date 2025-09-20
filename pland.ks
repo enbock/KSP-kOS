@@ -3,6 +3,7 @@
 //
 
 if defined mainWasStarted {
+core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
 
 set terminal:width to 48.
 set terminal:height to 14.

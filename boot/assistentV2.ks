@@ -1,4 +1,6 @@
 //core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
+copyPath("0:/mainLib", "").
+runOncePath("mainLib").
 
 set g to gui(300, 400). // Erhöhen der Höhe für mehr Platz
 
@@ -49,7 +51,8 @@ until false {
         // Startskript mit den neuen Werten ausführen
         runpath("0:/v2/launch.ks", targetAltitude, launchAngle, fuelBuffer).
     } else if isLandPressed {
-        runpath("0:/v2/land.ks").
+        //runpath("0:/v2/land.ks").
+        run pland.
     } else if isManeuverPressed {
         runpath("0:/v2/maneuver.ks").
     }
