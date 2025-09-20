@@ -32,15 +32,7 @@ if hasNode {
     set output:text to "Warping to maneuver node...".
 }
 
-when not execDone then {
-    if not hasNode {
-        set output:text to "No manouver planned.".
-        set execDone to true.
-        return false.
-    }
-
-    wait 0.
-
+until execDone {
     if burnDone and not inManouver and (nextNode:eta <= getBurnDuration() / 2.0) {
         set output:text to "Main engine start. ".
 
@@ -70,19 +62,8 @@ when not execDone then {
 
         //remove nextNode.
         set execDone to true.
-
-        return false.
     }
-
-    //if (ship:status = "SUB_ORBITAL" or ship:status = "FLYING") and ship:verticalspeed < -50 {
-    //    set execDone to true.
-    //    return false.
-    //}
-
-    return true.
 }
-
-wait until execDone.
 
 lock throttle to 0.
 set burnDone to true.

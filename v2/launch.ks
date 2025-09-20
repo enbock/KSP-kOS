@@ -2,9 +2,9 @@ parameter targetAltitude is 80000.
 parameter launchAngle is 90.
 parameter fuelBuffer is 0.1.
 
-local targetApoapsis to body:radius * 1.1.
+local targetApoapsis to body:radius * 1.2.
 if body:atm:exists {
-  set targetApoapsis to body:atm:height * 1.1.
+  set targetApoapsis to body:atm:height * 1.2.
 }
 
 function getLEO {
@@ -16,12 +16,13 @@ function getLEO {
 }
 
 function setCircularizationNode {
-  set needVelocity to sqrt(body:mu / (body:radius + targetAltitude)).
-  LOCAL timeToApoapsis to time:seconds + eta:apoapsis.
-  LOCAL velcityAtAposis to velocityAt(ship, timeToApoapsis):ORBIT:MAG.
-  set restVelocity to needVelocity - velcityAtAposis.
+  LOCAL radiusApoapsis TO body:radius + targetAltitude.
+  LOCAL velocityCircular TO sqrt(body:mu / radiusApoapsis).
+  LOCAL timeToApoapsis TO time:seconds + eta:apoapsis.
+  LOCAL velocityAtApoapsis TO velocityAt(ship, timeToApoapsis):ORBIT:MAG.
+  LOCAL deltaVelocity TO velocityCircular - velocityAtApoapsis.
 
-  set orbitalNode to node(timeToApoapsis, 0, 0, restVelocity).
+  LOCAL orbitalNode TO node(timeToApoapsis, 0, 0, deltaVelocity).
   add orbitalNode.
 }
 
