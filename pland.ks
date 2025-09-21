@@ -2,11 +2,27 @@
 // Powered landing
 //
 
-if defined mainWasStarted {
-core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
+RUNONCEPATH("0:/mainLib").
 
-set terminal:width to 48.
-set terminal:height to 14.
+local startPowerlandWithVSpeed to -5.
+local ignoreFlightState to true.
+
+
+local gOutput to gui(300, 400).
+set gOutput:x to -150.
+set gOutput:y to -300.
+set gOutput:draggable to true.
+
+set gOutput:style:fontsize to 20.
+
+local labelSSpeed to gOutput:addlabel("S-Speed :").
+local labelVSpeed to gOutput:addlabel("V-Speed :").
+local labelTank to gOutput:addlabel("Tank ").
+local labelTimeImpact to gOutput:addlabel("Time to impact:").
+local labelAlt to gOutput:addlabel("Alt :").
+local labelBurnAlt to gOutput:addlabel("").
+local labelThrottle to gOutput:addlabel("").
+local labelStatus to gOutput:addlabel("").
 
 local plandDone to false.
 
@@ -20,9 +36,13 @@ local AIRBREAKSused to false.
 
 set burnHeight to 0.0.
 
-clearScreen.
-print "Powered landing v4.3.1".
-print "Ready.".
+set labelStatus:text to "Powered landing v5.0.0".
+
+set gOutput:addbutton("STOP"):onclick to  {
+    set plandDone to true.
+}.
+gOutput:show().
+
 wait 0.
 
 set lt to 0.
@@ -46,9 +66,9 @@ lock tankAmount to stage:resourcesLex["LiquidFuel"]:amount.
 
 
 when lt = 0 then {
-    print "S-Speed       : " + round(ship:velocity:surface:mag, 0) + "m/s     " at (2, 6).
-    print "V-Speed       : " + round(ship:verticalspeed * -1.0, 0) + "m/s     " at (2, 7).
-    print "Tank          : " + round(tankAmount, 0) +"      " at (2, 10).
+    set labelSSpeed:text to "S-Speed       : " + round(ship:velocity:surface:mag, 0) + "m/s     ".
+    set labelVSpeed:text to "V-Speed       : " + round(ship:verticalspeed * -1.0, 0) + "m/s     ".
+    set labelTank:text to "Tank          : " + round(tankAmount, 0) +"      ".
 
     if(not plandDone) return true.
 }
@@ -78,8 +98,8 @@ when lt = 0 then {
     set isStartBurn to isStartBurnCalc().
     set timeToImpact to timeToImpactCalc().
     
-    print "Time to impact: " + round(timeToImpact, 0)            + "s     " at (2, 3).
-    print "Alt           : " + round(bottomAlt, 0)                 + "m     " at (2, 5).
+    set labelTimeImpact:text to "Time to impact: " + round(timeToImpact, 0) + "s     ".
+    set labelAlt:text to "Alt           : " + round(bottomAlt, 0) + "m     ".
 
     if(ship:availablethrust <= 0 or ship:verticalspeed > 0) {
         set burnHeight to 0.
@@ -95,10 +115,10 @@ when lt = 0 then {
     set burnHeight to (speed^2) / (2*accel()).
     
     if(burnHeight > maxBurnHeight and bottomAlt > 250) {
-        print "Tank-Burn Alt : " + round(maxBurnHeight, 0) + "m <-- " + round(burnHeight, 0) + "m               " at (2, 4).
+    set labelBurnAlt:text to "Tank-Burn Alt : " + round(maxBurnHeight, 0) + "m <-- " + round(burnHeight, 0) + "m".
         set burnHeight to maxBurnHeight.
     } else { 
-        print "Burn Alt      : " + round(burnHeight, 0) + "m                          " at (2, 4).
+    set labelBurnAlt:text to "Burn Alt      : " + round(burnHeight, 0) + "m".
     }
 
     if(not plandDone) return true.
@@ -140,7 +160,7 @@ when lt = 0 and not onceUnderTime and isStartBurn then { // breaking
     set wantSpeed to 1.0.
     set onceUnderTime to true.
 
-    print "Throttle ^    : " + round(wantSpeed * 100, 0) + "%     " at (2, 12).
+    set labelThrottle:text to "Throttle ^    : " + round(wantSpeed * 100, 0) + "%     ".
     lock throttle to wantSpeed.
 
     if(not plandDone) return true.
@@ -167,7 +187,7 @@ when onceUnderTime and lt = 0  then { // landing
         set onceUnderTime to false.
     }
 
-    print "Throttle v    : " + round(wantSpeed * 100, 0) + "%     " at (2, 12).
+    set labelThrottle:text to "Throttle v    : " + round(wantSpeed * 100, 0) + "%     ".
     lock throttle to wantSpeed.
 
     if(not plandDone) return true.
@@ -181,17 +201,11 @@ unlock throttle.
 SET SHIP:CONTROL:PILOTMAINTHROTTLE TO 0.
 SAS on.
 
-clearScreen.
+gOutput:hide().
 wait 0.1.
 if (ship:availablethrust <= 0.0) {
-    print "Thrusters lost.".
+    set labelStatus:text to "Thrusters lost.".
 } else {
-    print "Landed.".
+    set labelStatus:text to "Landed.".
     set brakes to false.
-}
-wait 5.0.
-
-} else {
-    copyPath("0:/boot/main", "1:/boot/main").
-    run "boot/main".
 }

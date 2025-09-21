@@ -1,15 +1,9 @@
 
-copyPath("0:/exec", "").
-copyPath("0:/land", "").
-copyPath("0:/pland", "").
-copyPath("0:/start", "").
-
 //core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
 wait 0.1.
 print "Main-Lib v2.2.0".
 RCS on.
 set CORE:PART:TAG to "kos_processor".
-
 
 global function isDecoupled {
     SET shipProcessorList to SHIP:PARTSTAGGED("kos_processor").

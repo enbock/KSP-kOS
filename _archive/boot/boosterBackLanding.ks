@@ -7,10 +7,9 @@ global ignoreFlightState to true.
 global powerLandFuelPercentage to 0.3.
 
 clearScreen.
-copyPath("0:/mainLib", "").
+copyPath("0:/pland", "").
 copyPath("0:/BoostBack/library", "").
 copyPath("0:/BoostBack/boostBack", "").
-runOncePath("mainLib").
 runOncePath("library").
 
 BackBoostInit().

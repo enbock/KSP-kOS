@@ -1,22 +1,18 @@
-parameter targetAltitude is 80000.
-parameter launchAngle is 90.
-parameter fuelBuffer is 0.1.
+parameter targetAltitude, launchAngle, fuelBuffer.
 
-local targetApoapsis to body:radius * 1.2.
-if body:atm:exists {
-  set targetApoapsis to body:atm:height * 1.2.
-}
+local targetApoapsis to targetAltitude.
+local lauchRunning to true.
 
-function getLEO {
-  parameter b.
-  if b:atm:exists {
-    return b:atm:height.
-  }
-  return b:altitude.
-}
+//if targetApoapsis < ship:body:radius * 1.1 {
+//  set targetApoapsis to ship:body:radius * 1.1.
+//}
+//if ship:body:atm:exists and targetApoapsis < ship:body:atm:height * 1.1 {
+//  set targetApoapsis to ship:body:atm:height * 1.1.
+//}
 
-function setCircularizationNode {
-  LOCAL radiusApoapsis TO body:radius + targetAltitude.
+
+function setTargetAltitudeNode {
+  LOCAL radiusApoapsis TO ship:body:radius + targetAltitude.
   LOCAL velocityCircular TO sqrt(body:mu / radiusApoapsis).
   LOCAL timeToApoapsis TO time:seconds + eta:apoapsis.
   LOCAL velocityAtApoapsis TO velocityAt(ship, timeToApoapsis):ORBIT:MAG.
@@ -31,17 +27,29 @@ set gOutput:x to -150.
 set gOutput:y to -300.
 set gOutput:draggable to true.
 
+local fuelBufferInputBox to gOutput:ADDHBOX().
+fuelBufferInputBox:ADDLABEL("Fuel Buffer (%)").
+set fuelBufferInputBox:ADDTEXTFIELD((fuelBuffer * 100):tostring):onchange to {
+  parameter value.
+  set fuelBuffer to value:tonumber() / 100.
+}.
+
 local outputLabelAltitude to gOutput:addlabel("Altitude:").
 local outputLabelLiquidFuel to gOutput:addlabel("Liquid Fuel:").
-local outputLabelSolidFuel to gOutput:addlabel("Solid Fuel:").
+//local outputLabelSolidFuel to gOutput:addlabel("Solid Fuel:").
 local outputLabelTargetApoapsis to gOutput:addlabel("Target Apoapsis: " + targetApoapsis + " meters").
-local outputLabelStatus to gOutput:addlabel("").
+local outputLabelStatus to gOutput:addlabel("Launch v1.1.0").
 
+set gOutput:addbutton("STOP"):onclick to  {
+    set lauchRunning to false.
+}.
 gOutput:show().
 
 set outputLabelStatus:text to "Launch sequence initiated.".
 
-stage.
+if ship:stagenum > 0 {
+  stage.
+}
 lock throttle to 1.
 
 wait until ship:altitude > 100.
@@ -62,9 +70,11 @@ function isApoapsisReached {
 
 local oldThrottle to 1.0.
 
-until isApoapsisReached() {
+until isApoapsisReached() or not lauchRunning {
     local apoPercent to 1.0 / targetApoapsis * ship:apoapsis.
     local angle to 90.0 - (90.0 * apoPercent).
+    local liquidTank to stage:resourcesLex["LiquidFuel"]:amount.
+
     if ship:altitude < turnStartAltitude {
         lock steering to heading(launchAngle, 90).
     } else {
@@ -72,10 +82,10 @@ until isApoapsisReached() {
     }
     
     set outputLabelAltitude:text to "Altitude: " + round(ship:altitude, 1) + " m".
-    set outputLabelLiquidFuel:text to "Liquid Fuel: " + round(stage:resourcesLex["LiquidFuel"]:amount, 1).
-    set outputLabelSolidFuel:text to "Solid Fuel: " + round(stage:resourcesLex["SolidFuel"]:amount, 1).
+    set outputLabelLiquidFuel:text to "Liquid Fuel: " + round(liquidTank, 1).
+    //set outputLabelSolidFuel:text to "Solid Fuel: " + round(stage:resourcesLex["SolidFuel"]:amount, 1).
     
-    if (stage:resourcesLex["LiquidFuel"]:amount <= (fuelBuffer * stage:resourcesLex["LiquidFuel"]:capacity) or (stage:resourcesLex["SolidFuel"]:amount <> 0 and stage:resourcesLex["SolidFuel"]:amount <= 0.025)) and ship:stagenum > 0 {
+    if (liquidTank <= (fuelBuffer * stage:resourcesLex["LiquidFuel"]:capacity)) and ship:stagenum > 0 {
         stage.
         set outputLabelStatus:text to "Staging...".
     }
@@ -105,17 +115,11 @@ until isApoapsisReached() {
     wait 0.1.
 }
 
-lock steering to prograde.
-until ship:apoapsis > targetApoapsis {
-  wait 1.
-}
-
-setCircularizationNode().
-
-lock throttle to 0.
-set outputLabelStatus:text to "Launch complete!".
+setTargetAltitudeNode().
 
 gOutput:hide().
+
+lock throttle to 0.
 unlock steering.
 unlock throttle.
 SET SHIP:CONTROL:PILOTMAINTHROTTLE TO 0.
