@@ -2,16 +2,15 @@
 
 if hasNode {
     local minThustPercent is 0.1.
-    local burnDone is true.
+    local burnDone is false.
     local oldDeltaV to 0.
     local beginManouverAt to 20.
     local inManouver to false.
     local execDone to false.
-    local manouver to nextNode.
     
 
     function getBurnDuration {
-        return manouver:deltav:mag / (max(0.0001, ship:availablethrust) / ship:mass).
+        return nextNode:deltav:mag / (max(0.0001, ship:availablethrust) / ship:mass).
     }
 
     local maneuverOutput to gui(300, 200).
@@ -27,30 +26,33 @@ if hasNode {
 
     SAS off.
 
-    lock steering to manouver.
-    lock manouverDeltaV to manouver:deltav:mag.
+    lock steering to nextNode.
+    lock manouverDeltaV to nextNode:deltav:mag.
     // Warten bis Schiff ausgerichtet ist
     set output:text to "Waiting for alignment to maneuver target...".
     // Berechne Winkel zwischen Schiff und Manöver-DeltaV
-    until VANG(ship:facing:vector, manouver:deltav) < 2  or execDone{
+    until VANG(ship:facing:vector, nextNode:deltav) < 2  
+        or execDone 
+        or (nextNode:eta <= getBurnDuration() / 2.0) 
+    {
         wait 0.1.
-        set output:text to "Alignment: " + round(VANG(ship:facing:vector, manouver:deltav), 2) + "°".
+        set output:text to "Alignment: " + round(VANG(ship:facing:vector, nextNode:deltav), 2) + "°".
     }
-    if not execDone {
+    if not execDone and (nextNode:eta > getBurnDuration() / 2.0) {
         set output:text to "Alignment reached. Starting warp...".
-        wait 5.
-        WARPTO(time:seconds + nextNode:eta - beginManouverAt - (getBurnDuration() / 2.0)).
+        wait 2.5.
         set output:text to "Warping to maneuver node...".
+        WARPTO(time:seconds + nextNode:eta - beginManouverAt - (getBurnDuration() / 2.0)).
     }
 
     set output:text to "Wait time to ignite...".
     
     until execDone {
-        if burnDone and not inManouver and (nextNode:eta <= getBurnDuration() / 2.0) {
+        if not inManouver and (nextNode:eta <= getBurnDuration() / 2.0) {
             set output:text to "Main engine start.".
 
             lock steering to nextNode.
-            set oldDeltaV to nextNode:deltav:mag + 1000000.0.
+            set oldDeltaV to manouverDeltaV + 1000.0.
             set burnDone to false.
             set inManouver to true.
         }
@@ -75,7 +77,6 @@ if hasNode {
             lock throttle to 0.
             set output:text to "Main engine cut off.".
 
-            //remove nextNode.
             set execDone to true.
         }
     }
