@@ -31,7 +31,7 @@ if hasNode {
     // Warten bis Schiff ausgerichtet ist
     set output:text to "Waiting for alignment to maneuver target...".
     // Berechne Winkel zwischen Schiff und Manöver-DeltaV
-    until VANG(ship:facing:vector, nextNode:deltav) < 2  
+    until VANG(ship:facing:vector, nextNode:deltav) < 1  
         or execDone 
         or (nextNode:eta <= getBurnDuration() / 2.0) 
     {
@@ -63,6 +63,7 @@ if hasNode {
             
             if (manouverDeltaV < 0.1 or oldDeltaV < manouverDeltaV) {
                 set burnDone to true.
+                lock throttle to 0.
             } else if (manouverDeltaV < 2.0) {
                 lock throttle to minThustPercent.
             } else if (manouverDeltaV < 7.0) {
