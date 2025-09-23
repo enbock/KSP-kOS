@@ -51,8 +51,7 @@ if hasNode {
         if not inManouver and (nextNode:eta <= getBurnDuration() / 2.0) {
             set output:text to "Main engine start.".
 
-            lock steering to nextNode.
-            set oldDeltaV to manouverDeltaV + 1000.0.
+            set oldDeltaV to nextNode:deltav:mag.
             set burnDone to false.
             set inManouver to true.
         }
@@ -70,7 +69,7 @@ if hasNode {
                 lock throttle to max(minThustPercent, 1.0 / 4.0 * (manouverDeltaV - 2.0)).
             } else lock throttle to 1.0.
 
-            set oldDeltaV to manouverDeltaV.
+            set oldDeltaV to nextNode:deltav:mag.
         }
 
         if burnDone and inManouver {
