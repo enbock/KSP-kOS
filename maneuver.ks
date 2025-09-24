@@ -4,13 +4,13 @@ if hasNode {
     local minThustPercent is 0.1.
     local burnDone is false.
     local oldDeltaV to 0.
-    local beginManouverAt to 20.
+    local beginManouverAt to 10.
     local inManouver to false.
     local execDone to false.
-    
+    lock manouverDeltaV to nextNode:deltav:mag.
 
     function getBurnDuration {
-        return nextNode:deltav:mag / (max(0.0001, ship:availablethrust) / ship:mass).
+        return manouverDeltaV / (max(0.0001, ship:availablethrust) / ship:mass).
     }
 
     local maneuverOutput to gui(300, 200).
@@ -18,7 +18,7 @@ if hasNode {
     set maneuverOutput:y to -100.
     set maneuverOutput:draggable to true.
 
-    local output to maneuverOutput:addlabel("Maneuver Executer v1.0.0").
+    local output to maneuverOutput:addlabel("Maneuver Executer v1.0.1").
     set maneuverOutput:addbutton("STOP"):onclick to  {
         set execDone to true.
     }.
@@ -27,7 +27,6 @@ if hasNode {
     SAS off.
 
     lock steering to nextNode.
-    lock manouverDeltaV to nextNode:deltav:mag.
     // Warten bis Schiff ausgerichtet ist
     set output:text to "Waiting for alignment to maneuver target...".
     // Berechne Winkel zwischen Schiff und Manöver-DeltaV
@@ -40,28 +39,25 @@ if hasNode {
     }
     if not execDone and (nextNode:eta > getBurnDuration() / 2.0) {
         set output:text to "Alignment reached. Starting warp...".
-        wait 2.5.
+        wait 5.
         set output:text to "Warping to maneuver node...".
         WARPTO(time:seconds + nextNode:eta - beginManouverAt - (getBurnDuration() / 2.0)).
     }
 
     set output:text to "Wait time to ignite...".
     
-    until execDone {
+    until not hasNode or execDone {
         if not inManouver and (nextNode:eta <= getBurnDuration() / 2.0) {
             set output:text to "Main engine start.".
 
-            set oldDeltaV to nextNode:deltav:mag.
             set burnDone to false.
             set inManouver to true.
         }
 
-        
-
         if not burnDone and inManouver {
             set output:text to "Delta-V: " + round(manouverDeltaV, 2) + " m/s".
             
-            if (manouverDeltaV < 0.1 or oldDeltaV < manouverDeltaV) {
+            if (manouverDeltaV < 0.5) {
                 set burnDone to true.
                 lock throttle to 0.
             } else if (manouverDeltaV < 2.0) {
@@ -69,8 +65,6 @@ if hasNode {
             } else if (manouverDeltaV < 7.0) {
                 lock throttle to max(minThustPercent, 1.0 / 4.0 * (manouverDeltaV - 2.0)).
             } else lock throttle to 1.0.
-
-            set oldDeltaV to nextNode:deltav:mag.
         }
 
         if burnDone and inManouver {
