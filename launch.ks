@@ -36,7 +36,7 @@ set fuelBufferInputBox:ADDTEXTFIELD((fuelBuffer * 100):tostring):onchange to {
 
 local outputLabelAltitude to gOutput:addlabel("Altitude:").
 local outputLabelLiquidFuel to gOutput:addlabel("Liquid Fuel:").
-//local outputLabelSolidFuel to gOutput:addlabel("Solid Fuel:").
+local outputLabelSolidFuel to gOutput:addlabel("Solid Fuel:").
 local outputLabelTargetApoapsis to gOutput:addlabel("Target Apoapsis: " + targetApoapsis + " meters").
 local outputLabelStatus to gOutput:addlabel("Launch v1.1.0").
 
@@ -69,11 +69,12 @@ function isApoapsisReached {
 }
 
 local oldThrottle to 1.0.
+lock liquidTank to stage:resourcesLex["LiquidFuel"]:amount.
+lock solidTank to stage:resourcesLex["SolidFuel"]:amount.
 
 until isApoapsisReached() or not lauchRunning {
     local apoPercent to 1.0 / targetApoapsis * ship:apoapsis.
     local angle to 90.0 - (90.0 * apoPercent).
-    local liquidTank to stage:resourcesLex["LiquidFuel"]:amount.
 
     if ship:altitude < turnStartAltitude {
         lock steering to heading(launchAngle, 90).
@@ -83,9 +84,12 @@ until isApoapsisReached() or not lauchRunning {
     
     set outputLabelAltitude:text to "Altitude: " + round(ship:altitude, 1) + " m".
     set outputLabelLiquidFuel:text to "Liquid Fuel: " + round(liquidTank, 1).
-    //set outputLabelSolidFuel:text to "Solid Fuel: " + round(stage:resourcesLex["SolidFuel"]:amount, 1).
+    set outputLabelSolidFuel:text to "Solid Fuel: " + round(solidTank, 1).
     
-    if (liquidTank <= (fuelBuffer * stage:resourcesLex["LiquidFuel"]:capacity)) and ship:stagenum > 0 {
+    if (liquidTank <= (fuelBuffer * stage:resourcesLex["LiquidFuel"]:capacity)) 
+        and ship:stagenum > 0  
+        and solidTank < 1
+    {
         stage.
         set outputLabelStatus:text to "Staging...".
     }

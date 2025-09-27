@@ -1,5 +1,5 @@
 //core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
-runOncePath("0:/mainLib").
+//runOncePath("0:/mainLib").
 
 set g to gui(300, 400). // Erhöhen der Höhe für mehr Platz
 

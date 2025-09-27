@@ -1,10 +1,45 @@
 //
 // Powered landing
 //
+//core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
 
-RUNONCEPATH("0:/mainLib").
+global function g {
+    return  ship:body:mu / (ship:body:radius + ship:bounds:bottomaltradar) ^ 2.
+}
 
-local startPowerlandWithVSpeed to -5.
+global function shipPitch {
+  return 90 - vang(ship:up:vector, ship:facing:forevector).
+}
+
+global function gravitationForce {
+    return ship:mass * g().
+}
+
+global function shipOrientedGravityForce {
+    return  gravitationForce() * (1 / 90 * shipPitch()).
+}
+
+global function shipForce {
+    return ship:availableThrust - shipOrientedGravityForce().
+}
+
+global function accel {
+    return (shipForce() / ship:mass).
+}
+
+global function twr {
+    return (accel() / g()) * throttle.
+}
+
+global function fuelBurnTime {
+    local flow to 0.
+    list engines in engineList.
+    FOR e IN engineList { 
+        set flow to flow + e:MAXFUELFLOW.
+    }
+    return stage:resourcesLex["LiquidFuel"]:amount / flow.
+}
+
 local ignoreFlightState to true.
 
 
@@ -36,7 +71,7 @@ local AIRBREAKSused to false.
 
 set burnHeight to 0.0.
 
-set labelStatus:text to "Powered landing v5.0.0".
+set labelStatus:text to "Powered landing v5.0.1".
 
 set gOutput:addbutton("STOP"):onclick to  {
     set plandDone to true.
@@ -72,9 +107,6 @@ when lt = 0 then {
 
     if(not plandDone) return true.
 }
-
-
-wait until ship:verticalspeed < startPowerlandWithVSpeed and (ship:status = "SUB_ORBITAL" or ignoreFlightState = true or altitude < 20000).
 
 print "         " at (0,4).
 lock steering to ship:srfretrograde.
@@ -203,9 +235,6 @@ SAS on.
 
 gOutput:hide().
 wait 0.1.
-if (ship:availablethrust <= 0.0) {
-    set labelStatus:text to "Thrusters lost.".
-} else {
-    set labelStatus:text to "Landed.".
+if (ship:availablethrust > 0.0) {
     set brakes to false.
 }

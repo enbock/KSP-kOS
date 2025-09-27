@@ -57,7 +57,7 @@ if hasNode {
         if not burnDone and inManouver {
             set output:text to "Delta-V: " + round(manouverDeltaV, 2) + " m/s".
             
-            if (manouverDeltaV < 0.25) {
+            if (manouverDeltaV < 0.033) {
                 set burnDone to true.
                 lock throttle to 0.
             } else if (manouverDeltaV < 2.0) {
