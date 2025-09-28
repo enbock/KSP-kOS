@@ -3,14 +3,6 @@ parameter targetAltitude, launchAngle, fuelBuffer.
 local targetApoapsis to targetAltitude.
 local lauchRunning to true.
 
-//if targetApoapsis < ship:body:radius * 1.1 {
-//  set targetApoapsis to ship:body:radius * 1.1.
-//}
-//if ship:body:atm:exists and targetApoapsis < ship:body:atm:height * 1.1 {
-//  set targetApoapsis to ship:body:atm:height * 1.1.
-//}
-
-
 function setTargetAltitudeNode {
   LOCAL radiusApoapsis TO ship:body:radius + targetAltitude.
   LOCAL velocityCircular TO sqrt(body:mu / radiusApoapsis).
@@ -71,6 +63,11 @@ function isApoapsisReached {
 local oldThrottle to 1.0.
 lock liquidTank to stage:resourcesLex["LiquidFuel"]:amount.
 lock solidTank to stage:resourcesLex["SolidFuel"]:amount.
+lock fuelReserve to (
+    stage:resourcesLex["LiquidFuel"]:capacity * fuelBuffer 
+    * min(1, (1 / targetAltitude) * (ship:altitude + targetAltitude * 0.3))
+) + 0.025.
+
 
 until isApoapsisReached() or not lauchRunning {
     local apoPercent to 1.0 / targetApoapsis * ship:apoapsis.
@@ -86,10 +83,14 @@ until isApoapsisReached() or not lauchRunning {
     set outputLabelLiquidFuel:text to "Liquid Fuel: " + round(liquidTank, 1).
     set outputLabelSolidFuel:text to "Solid Fuel: " + round(solidTank, 1).
     
-    if (liquidTank <= (fuelBuffer * stage:resourcesLex["LiquidFuel"]:capacity)) 
-        and ship:stagenum > 0  
-        and solidTank < 1
-    {
+    if (
+        liquidTank <= fuelReserve 
+        or (
+            stage:resourcesLex["SolidFuel"]:capacity > 0
+            and solidTank < 1
+        )
+    ) and ship:stagenum > 0  
+    {   
         stage.
         set outputLabelStatus:text to "Staging...".
     }

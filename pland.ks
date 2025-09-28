@@ -48,8 +48,6 @@ set gOutput:x to -150.
 set gOutput:y to -300.
 set gOutput:draggable to true.
 
-set gOutput:style:fontsize to 20.
-
 local labelSSpeed to gOutput:addlabel("S-Speed :").
 local labelVSpeed to gOutput:addlabel("V-Speed :").
 local labelTank to gOutput:addlabel("Tank ").
@@ -71,7 +69,7 @@ local AIRBREAKSused to false.
 
 set burnHeight to 0.0.
 
-set labelStatus:text to "Powered landing v5.0.1".
+set labelStatus:text to "Powered landing v5.0.2".
 
 set gOutput:addbutton("STOP"):onclick to  {
     set plandDone to true.

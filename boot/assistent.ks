@@ -1,5 +1,4 @@
-//core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
-//runOncePath("0:/mainLib").
+set CORE:PART:TAG to "kos_processor".
 
 set g to gui(300, 400). // Erhöhen der Höhe für mehr Platz
 
@@ -11,8 +10,6 @@ set g:style:fontsize to 20.
 local isLaunchPressed is false.
 local isLandPressed is false.
 local isManeuverPressed is false.
-
-// Eingabefelder für Zielhöhe, Startwinkel und den Puffer
 
 // Werte aus JSON-Datei laden
 local settingsFile is "0:/assistentSettings.json".
@@ -63,12 +60,10 @@ until false {
     g:hide().
 
     if isLaunchPressed {
-        // Zielhöhe, Startwinkel und Puffer aus den Eingabefeldern lesen
         local targetAltitude to targetAltitudeInput:text:tonumber() * 1000.
         local launchAngle to launchAngleInput:text:tonumber().
         local fuelBuffer to fuelBufferInput:text:tonumber() / 100.
         
-        // Werte als JSON speichern
         if saveJsonCheckbox {
             local settingsData is LEXICON().
             settingsData:Add("altitude", targetAltitudeInput:text).
@@ -80,7 +75,6 @@ until false {
         // Startskript mit den neuen Werten ausführen
         runpath("0:/launch", targetAltitude, launchAngle, fuelBuffer).
     } else if isLandPressed {
-        //runpath("0:/v2/land").
         runpath("0:/pland").
     } else if isManeuverPressed {
         runpath("0:/maneuver").
