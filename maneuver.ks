@@ -1,9 +1,8 @@
 
 
 if hasNode {
-    local minThustPercent is 0.1.
+    local minThustPercent is 0.05.
     local burnDone is false.
-    local oldDeltaV to 0.
     local beginManouverAt to 10.
     local inManouver to false.
     local execDone to false.
@@ -18,7 +17,8 @@ if hasNode {
     set maneuverOutput:y to -100.
     set maneuverOutput:draggable to true.
 
-    local output to maneuverOutput:addlabel("Maneuver Executer v1.0.1").
+    maneuverOutput:addlabel("Maneuver Executer v1.0.2").
+    local output to maneuverOutput:addlabel("").
     set maneuverOutput:addbutton("STOP"):onclick to  {
         set execDone to true.
     }.
