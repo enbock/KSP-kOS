@@ -1,5 +1,7 @@
-
 wait until ship:unpacked.
+
+SWITCH TO 1.
+copyPath("0:/pland", "1:/").
 
 set CORE:PART:TAG to "kos_processor".
 //local startParts to SHIP:PARTS:length.
@@ -15,4 +17,4 @@ wait until ship:verticalspeed > 5.
 
 print "Wait for decouple...".
 wait until isDecoupled().
-runpath("0:/pland").
+runpath("pland").

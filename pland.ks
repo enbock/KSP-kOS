@@ -40,12 +40,9 @@ global function fuelBurnTime {
     return stage:resourcesLex["LiquidFuel"]:amount / flow.
 }
 
-local ignoreFlightState to true.
-
-
 local gOutput to gui(300, 400).
 set gOutput:x to -150.
-set gOutput:y to -300.
+set gOutput:y to -400.
 set gOutput:draggable to true.
 
 local labelSSpeed to gOutput:addlabel("S-Speed :").
@@ -99,9 +96,9 @@ lock tankAmount to stage:resourcesLex["LiquidFuel"]:amount.
 
 
 when lt = 0 then {
-    set labelSSpeed:text to "S-Speed       : " + round(ship:velocity:surface:mag, 0) + "m/s     ".
-    set labelVSpeed:text to "V-Speed       : " + round(ship:verticalspeed * -1.0, 0) + "m/s     ".
-    set labelTank:text to "Tank          : " + round(tankAmount, 0) +"      ".
+    set labelSSpeed:text to "S-Speed: " + round(ship:velocity:surface:mag, 0) + "m/s     ".
+    set labelVSpeed:text to "V-Speed: " + round(ship:verticalspeed * -1.0, 0) + "m/s     ".
+    set labelTank:text to "Tank: " + round(tankAmount, 0) +"      ".
 
     if(not plandDone) return true.
 }
@@ -129,7 +126,7 @@ when lt = 0 then {
     set timeToImpact to timeToImpactCalc().
     
     set labelTimeImpact:text to "Time to impact: " + round(timeToImpact, 0) + "s     ".
-    set labelAlt:text to "Alt           : " + round(bottomAlt, 0) + "m     ".
+    set labelAlt:text to "Alt : " + round(bottomAlt, 0) + "m     ".
 
     if(ship:availablethrust <= 0 or ship:verticalspeed > 0) {
         set burnHeight to 0.
@@ -145,10 +142,10 @@ when lt = 0 then {
     set burnHeight to (speed^2) / (2*accel()).
     
     if(burnHeight > maxBurnHeight and bottomAlt > 250) {
-    set labelBurnAlt:text to "Tank-Burn Alt : " + round(maxBurnHeight, 0) + "m <-- " + round(burnHeight, 0) + "m".
+    set labelBurnAlt:text to "Tank-Burn Alt: " + round(maxBurnHeight, 0) + "m <-- " + round(burnHeight, 0) + "m".
         set burnHeight to maxBurnHeight.
     } else { 
-    set labelBurnAlt:text to "Burn Alt      : " + round(burnHeight, 0) + "m".
+    set labelBurnAlt:text to "Burn Alt: " + round(burnHeight, 0) + "m".
     }
 
     if(not plandDone) return true.

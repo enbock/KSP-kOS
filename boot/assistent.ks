@@ -1,4 +1,12 @@
+wait until ship:unpacked.
+
 set CORE:PART:TAG to "kos_processor".
+
+SWITCH TO 1.
+copyPath("0:/launch", "1:/").
+copyPath("0:/pland", "1:/").
+copyPath("0:/maneuver", "1:/").
+
 
 set g to gui(300, 400). // Erhöhen der Höhe für mehr Platz
 
@@ -73,11 +81,11 @@ until false {
         }
 
         // Startskript mit den neuen Werten ausführen
-        runpath("0:/launch", targetAltitude, launchAngle, fuelBuffer).
+        runpath("launch", targetAltitude, launchAngle, fuelBuffer).
     } else if isLandPressed {
-        runpath("0:/pland").
+        runpath("pland").
     } else if isManeuverPressed {
-        runpath("0:/maneuver").
+        runpath("maneuver").
     }
 
     wait 1.
