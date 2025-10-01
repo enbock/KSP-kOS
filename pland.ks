@@ -42,7 +42,7 @@ global function fuelBurnTime {
 
 local gOutput to gui(300, 400).
 set gOutput:x to -150.
-set gOutput:y to -400.
+set gOutput:y to -800.
 set gOutput:draggable to true.
 
 local labelSSpeed to gOutput:addlabel("S-Speed :").
@@ -63,17 +63,19 @@ local stopEnginesUnder to 0.7.
 lock stopEngineAtMaxHeightDifference to ship:verticalspeed.
 local avoidEnginesStopUnderTime to 5.
 local AIRBREAKSused to false.
+local stageDeltaV to ship:deltaV:current. //SHIP:STAGEDELTAV(SHIP:STAGENUM):CURRENT.
+local tankAmount to stage:resourcesLex["LiquidFuel"]:amount.
 
 set burnHeight to 0.0.
 
-set labelStatus:text to "Powered landing v5.0.2".
+set labelStatus:text to "Powered landing v5.0.4".
 
 set gOutput:addbutton("STOP"):onclick to  {
     set plandDone to true.
 }.
 gOutput:show().
 
-wait 0.
+wait 1.
 
 set lt to 0.
 set lt2 to 0.
@@ -91,8 +93,8 @@ WHEN not plandDone THEN {
     return true.
 }
 
-lock stageDeltaV to ship:deltaV:current. //SHIP:STAGEDELTAV(SHIP:STAGENUM):CURRENT.
-lock tankAmount to stage:resourcesLex["LiquidFuel"]:amount.
+set stageDeltaV to ship:deltaV:current. //SHIP:STAGEDELTAV(SHIP:STAGENUM):CURRENT.
+set tankAmount to stage:resourcesLex["LiquidFuel"]:amount.
 
 
 when lt = 0 then {

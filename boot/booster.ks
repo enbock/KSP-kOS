@@ -11,10 +11,13 @@ global function isDecoupled {
     return shipProcessorList:length = 1.
 }
 
-print "Bootser v2.2.0".
+print "Bootser v2.2.1".
 print "Wait for start...".
 wait until ship:verticalspeed > 5.
 
 print "Wait for decouple...".
 wait until isDecoupled().
+
+wait 3.
+
 runpath("pland").
